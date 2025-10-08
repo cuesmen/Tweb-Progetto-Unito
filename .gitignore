@@ -1,0 +1,83 @@
+############################
+# OS & Editor junk
+############################
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+.eslintcache
+
+############################
+# Node / JavaScript (frontend + mainserverexpress)
+############################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.parcel-cache/
+.cache/
+.tmp/
+
+# Build / bundles
+dist/
+build/
+storybook-static/
+.nyc_output/
+coverage/
+
+# Vite
+.vite/
+
+# Tests / E2E
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+test-results/
+
+# Env 
+.env
+.env.*
+!.env.example
+
+# Logs / PIDs
+logs/
+*.log
+pids/
+*.pid
+*.pid.lock
+
+############################
+# Java / Spring Boot (Maven/Gradle)
+############################
+# Compilati e artefatti
+target/
+build/
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
+
+# Maven
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!mvnw
+!mvnw.cmd
+
+# IDE Java / Eclipse
+.project
+.classpath
+.settings/
+
+# Crash log JVM
+hs_err_pid*
+replay_pid*
