@@ -11,7 +11,7 @@ public class Theme {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_movie")
+    @JoinColumn(name = "movie_id")
     private Movie movie;
 
     @Column(nullable = false)

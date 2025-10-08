@@ -6,7 +6,7 @@ import java.util.Set;
 public record MovieDTO(
         Long id,
         String name,
-        LocalDate date,
+        int date,
         String tagline,
         String description,
         Integer minute,

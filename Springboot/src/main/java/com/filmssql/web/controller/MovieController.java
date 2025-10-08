@@ -19,7 +19,13 @@ public class MovieController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MovieDTO> get(@PathVariable Long id){
-        return ResponseEntity.ok(Mappers.toDTO(movieService.get(id)));
+        Movie m = movieService.get(id);
+        try {
+            return ResponseEntity.ok(Mappers.toDTO(m));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @PostMapping

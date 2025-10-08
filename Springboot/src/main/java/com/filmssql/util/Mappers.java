@@ -3,8 +3,9 @@ package com.filmssql.util;
 import com.filmssql.domain.entity.*;
 import com.filmssql.web.dto.MovieDTO;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.LinkedHashSet;
+
+import static java.util.stream.Collectors.toCollection;
 
 public class Mappers {
     private Mappers(){}
@@ -18,10 +19,10 @@ public class Mappers {
                 m.getDescription(),
                 m.getMinute(),
                 m.getRating(),
-                m.getGenres().stream().map(Genre::getId).collect(Collectors.toSet()),
-                m.getStudios().stream().map(Studio::getId).collect(Collectors.toSet()),
-                m.getCountries().stream().map(Country::getId).collect(Collectors.toSet()),
-                m.getLanguages().stream().map(Language::getId).collect(Collectors.toSet())
+                m.getGenres().stream().map(Genre::getId).collect(toCollection(LinkedHashSet::new)),
+                m.getStudios().stream().map(Studio::getId).collect(toCollection(LinkedHashSet::new)),
+                m.getCountries().stream().map(Country::getId).collect(toCollection(LinkedHashSet::new)),
+                m.getLanguages().stream().map(Language::getId).collect(toCollection(LinkedHashSet::new))
         );
     }
 }

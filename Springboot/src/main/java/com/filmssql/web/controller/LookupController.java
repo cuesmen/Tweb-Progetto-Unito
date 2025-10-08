@@ -21,31 +21,31 @@ public class LookupController {
     @DeleteMapping("/genres/{id}")
     public ResponseEntity<?> deleteGenre(@PathVariable Long id){ service.deleteGenre(id); return ResponseEntity.noContent().build(); }
 
-    @GetMapping("/studios")
+    @GetMapping("/studio")
     public ResponseEntity<?> studios(){ return ResponseEntity.ok(service.listStudios()); }
 
-    @PostMapping("/studios")
+    @PostMapping("/studio")
     public ResponseEntity<?> createStudio(@RequestBody Studio s){ return ResponseEntity.ok(service.saveStudio(s)); }
 
-    @DeleteMapping("/studios/{id}")
+    @DeleteMapping("/studio/{id}")
     public ResponseEntity<?> deleteStudio(@PathVariable Long id){ service.deleteStudio(id); return ResponseEntity.noContent().build(); }
 
-    @GetMapping("/countries")
+    @GetMapping("/country")
     public ResponseEntity<?> countries(){ return ResponseEntity.ok(service.listCountries()); }
 
-    @PostMapping("/countries")
+    @PostMapping("/country")
     public ResponseEntity<?> createCountry(@RequestBody Country c){ return ResponseEntity.ok(service.saveCountry(c)); }
 
-    @DeleteMapping("/countries/{id}")
+    @DeleteMapping("/country/{id}")
     public ResponseEntity<?> deleteCountry(@PathVariable Long id){ service.deleteCountry(id); return ResponseEntity.noContent().build(); }
 
-    @GetMapping("/languages")
+    @GetMapping("/language")
     public ResponseEntity<?> languages(){ return ResponseEntity.ok(service.listLanguages()); }
 
-    @PostMapping("/languages")
+    @PostMapping("/language")
     public ResponseEntity<?> createLanguage(@RequestBody Language l){ return ResponseEntity.ok(service.saveLanguage(l)); }
 
-    @DeleteMapping("/languages/{id}")
+    @DeleteMapping("/language/{id}")
     public ResponseEntity<?> deleteLanguage(@PathVariable Long id){ service.deleteLanguage(id); return ResponseEntity.noContent().build(); }
 
     @GetMapping("/roles")

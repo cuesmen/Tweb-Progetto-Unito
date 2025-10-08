@@ -16,7 +16,7 @@ public class Movie {
     @Column(nullable = false)
     private String name;
 
-    private LocalDate date;
+    private int date;
 
     private String tagline;
 
@@ -38,32 +38,32 @@ public class Movie {
     @ManyToMany
     @JoinTable(
             name = "genres_movies",
-            joinColumns = @JoinColumn(name = "id_movie"),
-            inverseJoinColumns = @JoinColumn(name = "id_genre")
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "studios_movies",
-            joinColumns = @JoinColumn(name = "id_movie"),
-            inverseJoinColumns = @JoinColumn(name = "id_studio")
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "studio_id")
     )
     private Set<Studio> studios = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "countries_movies",
-            joinColumns = @JoinColumn(name = "id_movie"),
-            inverseJoinColumns = @JoinColumn(name = "id_country")
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "country_id")
     )
     private Set<Country> countries = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "languages_movies",
-            joinColumns = @JoinColumn(name = "id_movie"),
-            inverseJoinColumns = @JoinColumn(name = "id_language")
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id")
     )
     private Set<Language> languages = new HashSet<>();
 }

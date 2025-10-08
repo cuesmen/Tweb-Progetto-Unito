@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "countries")
+@Table(name = "country")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Country {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
