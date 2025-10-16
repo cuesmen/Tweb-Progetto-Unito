@@ -1,0 +1,122 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-image:
+  linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+  url('../assets/images/background-blurred.jpg');  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  --main-color: rgb(36, 181, 224);
+  --main-text-color: rgb(225, 225, 225);
+  --main-text-color-darker: rgb(161, 161, 161);
+  overflow-x: hidden;
+}
+
+
+html, body, #root { height: 100%; }
+
+.app-shell {
+  min-height: 100vh;        
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;   
+}
+
+.app-main {
+  flex: 1;                  
+  display: block;
+}
+
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.mainBackground {}
+
+
+
+:root{
+  --h1: clamp(28px, 3.3vw, 40px);
+  --h2: clamp(22px, 2.5vw, 28px);
+  --h3: clamp(18px, 2.0vw, 22px);
+  --text: 15px;                
+  --lh: 1.6;                    
+  --radius: 14px;              
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+               Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: var(--text);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700;                
+  letter-spacing: -0.015em;        
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+}
+
+h1 { font-size: var(--h1); font-weight: 700; }
+h2 { font-size: var(--h2); font-weight: 700; }
+h3 { font-size: var(--h3); font-weight: 600; }
+h4, h5, h6 { font-weight: 600; }
+
+p { margin: 0 0 1em; }
+
+small { font-size: 0.85em; opacity: 0.85; }
+
+a {
+  color: inherit;                        
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+a:hover { opacity: 0.9; }
+
+button, .btn {
+  font: 600 0.95rem / 1.2 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+
+
+.default-page{
+  margin-top: 40px;
+}

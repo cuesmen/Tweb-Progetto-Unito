@@ -12,6 +12,7 @@ public class Theme {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "movie_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Movie movie;
 
     @Column(nullable = false)

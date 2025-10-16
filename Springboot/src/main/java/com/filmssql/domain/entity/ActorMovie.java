@@ -10,11 +10,13 @@ public class ActorMovie {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false) @JoinColumn(name = "movie_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    @ManyToOne(optional = false) @JoinColumn(name = "actor_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "actor_id", nullable = false)
     private Actor actor;
 
-    private String role; // free-text role per the diagram
+    private String role; 
 }

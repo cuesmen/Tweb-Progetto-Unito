@@ -1,6 +1,5 @@
 package com.filmssql.web.dto;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 public record MovieDTO(
@@ -11,8 +10,15 @@ public record MovieDTO(
         String description,
         Integer minute,
         Double rating,
-        Set<Long> genreIds,
-        Set<Long> studioIds,
-        Set<Long> countryIds,
-        Set<Long> languageIds
+
+        PosterDTO poster,
+        Set<ThemeDTO> themes,
+        Set<CastDTO> cast,
+        Set<CrewCreditDTO> crew,
+        Set<ReleaseDTO> releases,
+
+        Set<GenreDTO> genres,
+        Set<StudioDTO> studios,
+        Set<CountryDTO> countries,
+        Set<LanguageDTO> languages
 ) {}

@@ -1,1 +1,3 @@
-package com.filmssql.web.dto; public record GenreDTO(Long id, String genre){}
+package com.filmssql.web.dto;
+
+public record GenreDTO(Long id, String genre) {}

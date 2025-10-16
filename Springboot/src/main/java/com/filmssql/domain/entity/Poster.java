@@ -7,13 +7,15 @@ import lombok.*;
 @Table(name = "posters")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Poster {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "movie_id")
-    private Movie movie;
-
-    @Column(nullable = false)
     private String link;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id", unique = true, nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Movie movie;
 }

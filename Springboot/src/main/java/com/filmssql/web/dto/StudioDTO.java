@@ -1,1 +1,3 @@
-package com.filmssql.web.dto; public record StudioDTO(Long id, String studio){}
+package com.filmssql.web.dto;
+
+public record StudioDTO(Long id, String name) {}

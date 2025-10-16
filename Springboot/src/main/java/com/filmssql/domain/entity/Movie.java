@@ -3,8 +3,8 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "movies")
@@ -16,8 +16,9 @@ public class Movie {
     @Column(nullable = false)
     private String name;
 
-    private int date;
+    private Integer date;
 
+    @Column(columnDefinition = "text")
     private String tagline;
 
     @Column(columnDefinition = "text")
@@ -27,43 +28,43 @@ public class Movie {
 
     private Double rating;
 
-    // relationships
+    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Poster poster;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Poster> posters = new HashSet<>();
+    private Set<Theme> themes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Theme> themes = new HashSet<>();
+    private Set<ActorMovie> cast = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MovieRolePerson> crew = new LinkedHashSet<>();
 
     @ManyToMany
-    @JoinTable(
-            name = "genres_movies",
+    @JoinTable(name = "genres_movies",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private Set<Genre> genres = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres = new LinkedHashSet<>();
 
     @ManyToMany
-    @JoinTable(
-            name = "studios_movies",
+    @JoinTable(name = "studios_movies",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "studio_id")
-    )
-    private Set<Studio> studios = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "studio_id"))
+    private Set<Studio> studios = new LinkedHashSet<>();
 
     @ManyToMany
-    @JoinTable(
-            name = "countries_movies",
+    @JoinTable(name = "countries_movies",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "country_id")
-    )
-    private Set<Country> countries = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "country_id"))
+    private Set<Country> countries = new LinkedHashSet<>();
 
     @ManyToMany
-    @JoinTable(
-            name = "languages_movies",
+    @JoinTable(name = "languages_movies",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "language_id")
-    )
-    private Set<Language> languages = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "language_id"))
+    private Set<Language> languages = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ReleaseMovie> releases = new LinkedHashSet<>();
+
 }
