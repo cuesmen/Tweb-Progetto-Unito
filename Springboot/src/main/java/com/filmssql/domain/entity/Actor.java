@@ -18,8 +18,4 @@ public class Actor {
     @OneToOne(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private ActorInfo info;
 
-    public void attachInfo(ActorInfo info) {
-        this.info = info;
-        if (info != null) info.setActor(this);
-    }
 }

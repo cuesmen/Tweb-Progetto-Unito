@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                 "timestamp", Instant.now().toString(),
                 "status", 404,
-                "error", "Not Found",
+                "error", "Resource Not Found",
                 "message", ex.getMessage()
         ));
     }

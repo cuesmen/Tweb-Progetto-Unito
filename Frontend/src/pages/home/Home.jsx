@@ -99,7 +99,6 @@ export default function Home() {
           <section className="home-hero glass-card">
             <HomeTopSearch
               activeFilter={activeFilter}
-              onChangeFilter={setActiveFilter}
               onShuffle={handleShuffle}
               isFetching={!!isFetching}
             />

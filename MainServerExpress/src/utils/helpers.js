@@ -11,11 +11,8 @@ export async function trySpringGet(paths, req) {
       const { data } = await spring.get(url, { params: req.query });
       return data;
     } catch (err) {
-      const status = err?.response?.status;
-      if (status === 404 || status === 400) {
-        lastErr = err;
-        continue;
-      }
+      console.log(err);
+      lastErr = err;
       throw err;
     }
   }

@@ -20,7 +20,7 @@ public class ActorInfoController {
     @GetMapping("/actors/{actorId}/info")
     public ActorInfoDTO getByActor(@PathVariable Long actorId) {
         ActorInfo info = infoRepo.findById(actorId)
-                .orElseThrow(() -> new NotFoundException("ActorInfo non trovato per actorId=" + actorId));
+                .orElseThrow(() -> new NotFoundException("ActorInfo not found for actorId=" + actorId));
         return ActorInfoMapper.toDto(info);
     }
 
