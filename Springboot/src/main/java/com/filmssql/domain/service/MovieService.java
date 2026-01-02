@@ -4,6 +4,7 @@ import com.filmssql.domain.entity.*;
 import com.filmssql.domain.repository.*;
 import com.filmssql.util.Mappers;
 import com.filmssql.web.dto.MovieDTO;
+import com.filmssql.web.dto.MoviePreviewDTO;
 import com.filmssql.web.dto.SearchResultDTO;
 import com.filmssql.web.exception.NotFoundException;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class MovieService {
@@ -110,6 +112,35 @@ public class MovieService {
                         m.getPoster() != null ? m.getPoster().getLink() : null
                 ))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public MoviePreviewDTO getPreviewDto(Long id) {
+        return movieRepository.findPreviewById(id)
+                .orElseThrow(() -> new NotFoundException("Movie %d not found".formatted(id)));
+    }
+
+    @Transactional(readOnly = true)
+    public MoviePreviewDTO getRandomPreviewDto() {
+        long total = movieRepository.countAllMoviesWithHighRating();
+        if (total <= 0) throw new NotFoundException("No high-rated movies available");
+
+        long off = ThreadLocalRandom.current().nextLong(total);
+        Long id = movieRepository.findHighRatedIdByOffset(off);
+
+        if (id == null) id = movieRepository.findHighRatedIdByOffset(Math.max(0, total - 1));
+        return getPreviewDto(id);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<MoviePreviewDTO> getTopRated(int limit) {
+        return movieRepository.findTopRated(PageRequest.of(0, limit));
+    }
+
+    @Transactional(readOnly = true)
+    public List<MoviePreviewDTO> getLatest(int limit) {
+        return movieRepository.findLatest(PageRequest.of(0, limit));
     }
 
 }

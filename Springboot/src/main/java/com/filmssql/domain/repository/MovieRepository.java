@@ -1,6 +1,7 @@
 package com.filmssql.domain.repository;
 
 import com.filmssql.domain.entity.Movie;
+import com.filmssql.web.dto.MoviePreviewDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
@@ -61,5 +62,52 @@ public interface MovieRepository extends JpaRepository<Movie, Long>
             ORDER BY similarity(m.name, :name) DESC, m.rating DESC NULLS LAST
             """)
     List<Movie> findByNameContainingIgnoreCase(@Param("name") String name, Pageable pageable);
+
+    @Query("""
+    select new com.filmssql.web.dto.MoviePreviewDTO(
+        m.id, m.name, m.date, m.description, m.rating,
+        new com.filmssql.web.dto.PosterDTO(p.id, p.link)
+    )
+    from Movie m
+    left join m.poster p
+    where m.id = :id
+""")
+    Optional<MoviePreviewDTO> findPreviewById(@Param("id") Long id);
+
+    @Query("select count(m) from Movie m")
+    long countAllMovies();
+
+    @Query(value = "SELECT id FROM movies ORDER BY id OFFSET :off LIMIT 1", nativeQuery = true)
+    Long findIdByOffset(@Param("off") long offset);
+
+    @Query("""
+    select new com.filmssql.web.dto.MoviePreviewDTO(
+        m.id, m.name, m.date, m.description, m.rating,
+        new com.filmssql.web.dto.PosterDTO(p.id, p.link)
+    )
+    from Movie m
+    left join m.poster p
+    where m.rating is not null
+    order by m.rating desc
+""")
+    List<MoviePreviewDTO> findTopRated(Pageable pageable);
+
+    @Query("""
+    select new com.filmssql.web.dto.MoviePreviewDTO(
+        m.id, m.name, m.date, m.description, m.rating,
+        new com.filmssql.web.dto.PosterDTO(p.id, p.link)
+    )
+    from Movie m
+    left join m.poster p
+    where m.date is not null
+    order by m.date desc
+""")
+    List<MoviePreviewDTO> findLatest(Pageable pageable);
+
+    @Query("SELECT COUNT(m) FROM Movie m WHERE m.rating > 4")
+    long countAllMoviesWithHighRating();
+
+    @Query(value = "SELECT m.id FROM Movie m WHERE m.rating > 4 ORDER BY m.id ASC OFFSET :offset ROWS FETCH NEXT 1 ROWS ONLY")
+    Long findHighRatedIdByOffset(long offset);
 
 }

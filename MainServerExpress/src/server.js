@@ -4,11 +4,13 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { ENV } from './config/env.js';
 import { setupSwagger } from './config/swagger.js';
+import { closeMongo } from './mongodb/mongo.js';
 
 import systemRoutes from './routes/system.js';
 import moviesRoutes from './routes/movies.js';
 import actorsRoutes from './routes/actors.js';
 import searchRoutes from './routes/search.js';
+import mongoRoutes from './routes/mongo.js'; 
 
 const app = express();
 app.use(cors({ origin: ENV.SPA_ORIGIN, credentials: true }));
@@ -18,6 +20,7 @@ app.use('/api', systemRoutes);
 app.use('/api', moviesRoutes);
 app.use('/api', actorsRoutes);
 app.use('/api', searchRoutes);
+app.use('/api', mongoRoutes);
 
 app.use((err, _req, res, _next) => {
   const status = err.response?.status || err.statusCode || 500;
@@ -31,18 +34,47 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-
-
 if (ENV.ENABLE_DOCS === 'true') setupSwagger(app);
 
-
-
 const server = http.createServer(app);
-const io = new SocketIOServer(server, { cors: { origin: ENV.SPA_ORIGIN } });
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: ENV.SPA_ORIGIN,        
+    methods: ["GET", "POST"],
+    credentials: true,             
+  },
+});
+
+app.set('io', io);
+
+// Socket rooms per chat: 'global' o 'movie:<movieId>'
 io.on('connection', (socket) => {
-  socket.on('chat:message', (msg) => io.emit('chat:message', { ...msg, ts: Date.now() }));
+  socket.on('chat:join', (room) => {
+    try {
+      if (typeof room !== 'string') return;
+      if (!room.startsWith('movie:') && room !== 'global') return;
+      socket.join(room);
+      socket.emit('chat:joined', { room });
+    } catch {}
+  });
+
+  socket.on('chat:leave', (room) => {
+    try {
+      if (typeof room !== 'string') return;
+      socket.leave(room);
+      socket.emit('chat:left', { room });
+    } catch {}
+  });
 });
 
 server.listen(ENV.PORT, () => {
   console.log(`✅ Gateway running on http://localhost:${ENV.PORT}`);
 });
+
+const shutdown = async (signal) => {
+  console.log(`\n${signal} received, closing...`);
+  await closeMongo();
+  server.close(() => process.exit(0));
+};
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));

@@ -15,7 +15,8 @@
 
 
 .film-page {
-    width: 100vw;
+    width: min(1200px, 92vw);
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,22 +24,6 @@
     gap: 100px;
     padding-top: 80px;
     padding-bottom: 80px;
-}
-
-.film-container {
-    width: 60%;
-    background: linear-gradient(to left, #141414, #1f1f1f);
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
-
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 24px;
-    align-items: start;
-
-    padding: 32px;
-    position: relative;
-    overflow: visible;
 }
 
 .img-placeholder {
@@ -338,7 +323,8 @@
 
 
 .film-infos {
-    width: 60%;
+    min-width: 100%;
+    width: 100%;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     background: rgba(255, 255, 255, 0.05); 
@@ -656,8 +642,7 @@
 
 /* ================ CARD ================ */
 .film-container {
-  width: min(960px, 80vw);
-  min-width: 60%;
+  min-width: 100%;
   background: transparent;
   border-radius: 24px;
   display: grid;

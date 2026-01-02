@@ -3,8 +3,8 @@ import { TiArrowSortedUp } from "react-icons/ti";
 import { animateScroll as scroll } from "react-scroll";
 
 export default function BackToTopArrow({
-  threshold = 200,     
-  duration = 700,       
+  threshold = 200,
+  duration = 700,
 }) {
   const [visible, setVisible] = useState(false);
   const ticking = useRef(false);
@@ -14,7 +14,8 @@ export default function BackToTopArrow({
       if (ticking.current) return;
       ticking.current = true;
       requestAnimationFrame(() => {
-        setVisible(window.scrollY > threshold);
+        const scrollPos = window.pageYOffset ?? document.documentElement.scrollTop ?? document.body.scrollTop ?? 0;
+        setVisible(scrollPos > threshold);
         ticking.current = false;
       });
     };

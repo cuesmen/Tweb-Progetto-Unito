@@ -6,6 +6,7 @@ export class SearchService {
       params: { query },
       signal,
     });
+
     return res.data; 
   }
 }

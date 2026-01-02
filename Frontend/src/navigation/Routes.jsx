@@ -39,7 +39,7 @@ export default function AppRoutes() {
         </div>
       </Router>
 
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/*<ReactQueryDevtools initialIsOpen={false} />*/}
     </QueryClientProvider>
   );
 }

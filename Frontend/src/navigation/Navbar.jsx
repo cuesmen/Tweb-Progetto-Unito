@@ -62,16 +62,46 @@ export default function Navbar() {
   } = useSearchQuery(debouncedQuery);
 
   const errorMsg =
-    error?.response?.data?.error?.message ||
     error?.message ||
+    error?.response?.data?.error?.message ||
     "Unable to complete search.";
 
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const mainEl = document.querySelector(".app-main");
+    const opts = { passive: true };
+
+    const getScrollY = () => {
+      const mainScroll = mainEl ? mainEl.scrollTop : 0;
+      const globalScroll =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
+      return Math.max(mainScroll, globalScroll);
+    };
+
+    const handleScroll = () => {
+      setScrolled(getScrollY() > 50);
+    };
+
+    const raf = requestAnimationFrame(handleScroll);
+
+    window.addEventListener("scroll", handleScroll, opts);
+    if (mainEl) {
+      mainEl.addEventListener("scroll", handleScroll, opts);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", handleScroll, opts);
+      if (mainEl) {
+        mainEl.removeEventListener("scroll", handleScroll, opts);
+      }
+    };
   }, []);
+    
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -86,7 +116,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="upperNav">
+      <div className={`upperNav ${scrolled ? "scrolled" : ""}`}>
         <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
           <img onClick={() => navigate("/")} className="logo" src={logo} alt="Logo" />
 

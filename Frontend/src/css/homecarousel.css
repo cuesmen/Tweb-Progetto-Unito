@@ -1,0 +1,247 @@
+/* =======================================
+   Home Page Carousels
+   Stili dedicati ai caroselli della home
+======================================= */
+
+:root {
+  --home-carousel-card-w: clamp(150px, 18vw, 210px);
+  --home-carousel-gap: clamp(14px, 2vw, 18px);
+}
+
+.home-carousels {
+  display: grid;
+  gap: 28px;
+  margin-top: 24px;
+}
+
+.home-carousel {
+  width: 100%;
+  position: relative;
+  display: grid;
+  gap: 12px;
+}
+
+.home-carousel header.carousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+.home-carousel header.carousel-header h3 {
+  margin: 0;
+  font-weight: 600;
+}
+.home-carousel .carousel-cta {
+  display: inline-flex;
+  gap: 8px;
+}
+.home-carousel .nav-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+.home-carousel .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+.home-carousel .nav-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 2px;
+}
+
+.home-carousel .carousel-viewport {
+  position: relative;
+  inline-size: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 10px 0;
+  overscroll-behavior-inline: contain;
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 12%,
+    rgba(0, 0, 0, 1) 88%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 12%,
+    rgba(0, 0, 0, 1) 88%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+.home-carousel .carousel-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.home-carousel .carousel-track {
+  display: flex;
+  gap: var(--home-carousel-gap);
+  min-inline-size: 100%;
+  padding-inline: 8px;
+  box-sizing: border-box;
+  scroll-snap-type: x mandatory;
+  position: relative;
+  z-index: 1;
+}
+
+.home-carousel .carousel-card {
+  list-style: none;
+  flex: 0 0 var(--home-carousel-card-w);
+  scroll-snap-align: start;
+  min-inline-size: 0;
+}
+
+.home-carousel .carousel-item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  transition: transform 0.25s ease, background 0.25s ease,
+    box-shadow 0.25s ease;
+  height: 100%;
+}
+.home-carousel .carousel-item:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+.home-carousel .carousel-item--clickable {
+  cursor: pointer;
+}
+.home-carousel .carousel-item--clickable:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+.home-carousel .carousel-item--disabled {
+  cursor: default;
+}
+
+.home-carousel .carousel-media {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+.home-carousel .carousel-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-carousel .carousel-info {
+  display: grid;
+  gap: 6px;
+  padding: 10px 10px 12px;
+  min-height: 70px;
+}
+.home-carousel .carousel-info h4 {
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-carousel .carousel-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.home-carousel .badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.home-carousel .carousel-item.skeleton {
+  pointer-events: none;
+}
+.home-carousel .skeleton .carousel-media {
+  position: relative;
+}
+.home-carousel .skeleton .carousel-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.08)
+  );
+  background-size: 200% 100%;
+  animation: homeCarouselShimmer 1.2s ease infinite;
+}
+.home-carousel .skeleton .carousel-info {
+  padding: 12px 10px;
+}
+.home-carousel .skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  margin-top: 8px;
+}
+.home-carousel .skeleton-line.short {
+  width: 60%;
+}
+
+@keyframes homeCarouselShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --home-carousel-card-w: clamp(140px, 24vw, 200px);
+  }
+}
+
+@media (max-width: 768px) {
+  .home-carousel header.carousel-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .home-carousel header.carousel-header h3 {
+    font-size: 1.05rem;
+  }
+  .home-carousel .carousel-info {
+    min-height: 64px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --home-carousel-card-w: clamp(130px, 54vw, 180px);
+  }
+  .home-carousel header.carousel-header {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-carousels {
+    gap: 22px;
+  }
+}

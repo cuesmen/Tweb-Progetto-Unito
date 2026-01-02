@@ -1,4 +1,3 @@
-// src/pages/film/FilmContainer.jsx
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
 import FilmContainerCast from "./FilmContainerCast";
 import Flag from "../../components/Flag";
@@ -9,7 +8,6 @@ const NO_POSTER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='230' height='345'><rect width='100%' height='100%' fill='%23eee'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-family='sans-serif' font-size='14'>No poster</text></svg>";
 
 export default function FilmContainer({ movie, onSeeMore }) {
-  // safe fallbacks
   const title = movie?.name ?? "—";
   const year = movie?.date ?? "—";
   const posterUrl = movie?.poster?.link ?? NO_POSTER;
@@ -47,7 +45,7 @@ export default function FilmContainer({ movie, onSeeMore }) {
 
   return (
     <>
-      <div className="film-container glass-card">
+      <div className="glass-card film-container ">
         <div className="film-container-countries">
           {safeCountryCodes.map((code) => (
             <span className="flag-chip" key={code}>

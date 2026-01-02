@@ -6,6 +6,7 @@ import DefaultPage from "../../components/DefaultPage";
 import FilmContainer from "./FilmContainer";
 import FilmInfos from "./FilmInfos";
 import FilmCrewCarousel from "./FilmCrewCarousel";
+import FilmChat from "./FilmChat";
 import Alert from "../../components/Alert";
 import { useMovieQuery } from "../../api/movie/useMovieQuery";
 
@@ -17,24 +18,17 @@ export default function Film() {
   const [showError, setShowError] = useState(true);
 
   const handleSeeMore = () => {
-    scroller.scrollTo("film-infos", {
-      duration: 1500,
-      delay: 0,
-      smooth: "easeInOut",
-      offset: -130,
-    });
+    scroller.scrollTo("film-infos", { duration: 1500, delay: 0, smooth: "easeInOut", offset: -130 });
   };
 
-  if (isLoading) {
-    return (
-      <DefaultPage loading={isLoading} loadingMessage="Loading movie...">
-      </DefaultPage>
-    );
-  }
-
-  if (isError && showError) {
-    return (
-      <DefaultPage>
+  return (
+    <DefaultPage
+      loading={isLoading}
+      loadingMessage="Loading movie..."
+      minShowMs={500}
+      delayMs={0}
+    >
+      {isError && showError ? (
         <Alert
           type="error"
           title="Error when loading the movie"
@@ -42,30 +36,21 @@ export default function Film() {
           dismissible
           onClose={() => setShowError(false)}
         />
-      </DefaultPage>
-    );
-  }
-
-  if (!isError && !movie) {
-    return (
-      <DefaultPage>
+      ) : !isError && !isLoading && !movie ? (  
         <Alert
           type="warning"
           title="Film not found"
           description="The requested movie is not available or does not exist."
-          />
-      </DefaultPage>
-    );
-  }
-
-  return (
-    <DefaultPage>
-      <div className="film-page">
-        <FilmContainer movie={movie} onSeeMore={handleSeeMore} />
-        <FilmInfos movie={movie} />
-        <FilmCrewCarousel movie={movie} isActor />
-        <FilmCrewCarousel movie={movie} />
-      </div>
+        />
+      ) : movie ? (
+        <div className="film-page">
+          <FilmContainer movie={movie} onSeeMore={handleSeeMore} />
+          <FilmInfos movie={movie} />
+          <FilmCrewCarousel movie={movie} isActor />
+          <FilmCrewCarousel movie={movie} />
+          <FilmChat movie={movie} />
+        </div>
+      ) : null}
     </DefaultPage>
   );
 }
