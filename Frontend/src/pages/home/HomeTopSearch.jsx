@@ -1,6 +1,6 @@
 import { IoSparkles, IoShuffle } from "react-icons/io5";
 
-export default function HomeTopSearch({ activeFilter, onShuffle, isFetching }) {
+export default function HomeTopSearch({ onShuffle, isFetching }) {
     return (
       <div className="hero-copy">
         <h1 className="gradient-text">
@@ -8,12 +8,12 @@ export default function HomeTopSearch({ activeFilter, onShuffle, isFetching }) {
           <small> cinema.</small>
         </h1>
         <p className="hero-sub">
-          Scopri e colleziona i tuoi film preferiti o trovane di nuovi!
+          Find your next favorite movie with MoviePoint! Explore our vast collection, read reviews, and get personalized recommendations. Dive into the world of cinema today!
         </p>
   
         <div className="cta-row">
           <button
-            className={`glass-pill ${activeFilter === "Novità" ? "is-active" : ""}`}
+            className={`glass-pill "is-active" : ""}`}
             onClick={onShuffle}
             aria-label="Film casuale"
             disabled={isFetching}

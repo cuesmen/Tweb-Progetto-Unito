@@ -84,7 +84,7 @@ export default function FilmContainer({ movie, onSeeMore }) {
 
           <div className="film-container-infos-description">
             {tagline && <h2>{tagline}</h2>}
-            {description ? <p>{description}</p> : <p>Descrizione non disponibile.</p>}
+            {description ? <p>{description}</p> : <p>Description not present.</p>}
           </div>
 
           <div className="film-container-infos-cast-wrapper">
@@ -111,7 +111,7 @@ export default function FilmContainer({ movie, onSeeMore }) {
                   )}
                 </>
               ) : (
-                <span>Non disponibile</span>
+                <span>Not available</span>
               )}
             </div>
           </div>

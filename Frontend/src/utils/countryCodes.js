@@ -2,7 +2,7 @@ import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 countries.registerLocale(enLocale);
 
-//CHATGPT:
+// ChatGpt exported country code mapping:
 const MANUAL_OVERRIDES = {
   uk: "GB",
   "u.k.": "GB",

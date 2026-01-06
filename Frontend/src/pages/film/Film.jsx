@@ -34,7 +34,6 @@ export default function Film() {
           title="Error when loading the movie"
           description={error?.message || "An unexpected error has occurred."}
           dismissible
-          onClose={() => setShowError(false)}
         />
       ) : !isError && !isLoading && !movie ? (  
         <Alert

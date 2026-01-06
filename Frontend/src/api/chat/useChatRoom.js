@@ -9,9 +9,12 @@ import ChatMessage from "../../models/ChatMessage";
  */
 export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
   const isGlobal = room === "global";
-  const movieId = useMemo(() => (isGlobal ? null : room?.startsWith("movie:") ? room.slice(6) : null), [room]);
+  const movieId = useMemo(
+    () => (isGlobal ? null : room?.startsWith("movie:") ? room.slice(6) : null),
+    [room]
+  );
 
-  const [messages, setMessages] = useState([]);   // dal più nuovo al più vecchio
+  const [messages, setMessages] = useState([]); // newest to oldest
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -20,7 +23,7 @@ export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
 
   const abortRef = useRef(null);
 
-  // reset quando cambia room
+  // reset if room changes
   useEffect(() => {
     setMessages([]);
     setCursor(null);
@@ -28,12 +31,11 @@ export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
     setError(null);
   }, [room]);
 
-  // join/leave socket room (se socket presente)
+  // join/leave socket room
   useEffect(() => {
     if (!socket || !room) return;
     socket.emit("chat:join", room);
     const onIncoming = (msg) => {
-      // append in testa (timeline discendente)
       const m = ChatMessage.fromApi(msg);
       setMessages((prev) => [m, ...prev]);
     };
@@ -50,7 +52,7 @@ export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
     setLoading(true);
     setError(null);
 
-    // cancel request precedente se presente
+    // if there is a previous request ongoing, cancel it
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -58,52 +60,74 @@ export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
     try {
       let page;
       if (isGlobal) {
-        page = await chatService.listGlobal({ limit: pageSize, cursor, signal: controller.signal });
+        page = await chatService.listGlobal({
+          limit: pageSize,
+          cursor,
+          signal: controller.signal,
+        });
       } else {
-        page = await chatService.listByMovie(movieId, { limit: pageSize, cursor, signal: controller.signal });
+        page = await chatService.listByMovie(movieId, {
+          limit: pageSize,
+          cursor,
+          signal: controller.signal,
+        });
       }
-      setMessages((prev) => [...prev, ...page.items]);  // append in coda (stiamo scorrendo verso più vecchi)
+      setMessages((prev) => [...prev, ...page.items]); // append at the end (oldest)
       setCursor(page.nextCursor);
       setHasMore(page.hasMore);
     } catch (e) {
-      if (e?.code === "ERR_CANCELED" || e?.name === "CanceledError" || e?.message === "canceled") return;
+      if (
+        e?.code === "ERR_CANCELED" ||
+        e?.name === "CanceledError" ||
+        e?.message === "canceled"
+      )
+        return;
       setError(e);
     } finally {
       setLoading(false);
     }
   }, [isGlobal, movieId, pageSize, cursor, hasMore, loading, room]);
 
-  // bootstrap prima pagina
-  useEffect(() => { loadMore(); /* eslint-disable-next-line */ }, [room]);
+  // bootstrap first load
+  useEffect(() => {
+    loadMore(); /* eslint-disable-next-line */
+  }, [room]);
 
-  const send = useCallback(async ({ username, text }) => {
-    if (!room) return null;
-    setSending(true);
-    setError(null);
+  const send = useCallback(
+    async ({ username, text }) => {
+      if (!room) return null;
+      setSending(true);
+      setError(null);
 
-    // opzionale: Abort per send (di rado serve)
-    const controller = new AbortController();
+      const controller = new AbortController();
 
-    try {
-      const saved = isGlobal
-        ? await chatService.sendGlobal({ username, text }, { signal: controller.signal })
-        : await chatService.sendToMovie(movieId, { username, text }, { signal: controller.signal });
+      try {
+        const saved = isGlobal
+          ? await chatService.sendGlobal(
+              { username, text },
+              { signal: controller.signal }
+            )
+          : await chatService.sendToMovie(
+              movieId,
+              { username, text },
+              { signal: controller.signal }
+            );
 
-      // NB: il realtime arriverà comunque via socket se presente.
-      // Per UX immediata (senza socket), facciamo anche un prepend ottimistico:
-      if (!socket) setMessages((prev) => [saved, ...prev]);
+        if (!socket) setMessages((prev) => [saved, ...prev]);
 
-      return saved;
-    } catch (e) {
-      setError(e);
-      throw e;
-    } finally {
-      setSending(false);
-    }
-  }, [room, isGlobal, movieId, socket]);
+        return saved;
+      } catch (e) {
+        setError(e);
+        throw e;
+      } finally {
+        setSending(false);
+      }
+    },
+    [room, isGlobal, movieId, socket]
+  );
 
   return {
-    messages,          // array ChatMessage (nuovi → vecchi)
+    messages, // array ChatMessage (newest → oldest)
     hasMore,
     loading,
     sending,

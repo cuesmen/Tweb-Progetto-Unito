@@ -15,7 +15,7 @@ export default function HomeFilmFounded({ featured, imgLoading, isFetching, onIm
         {(isFetching || imgLoading) && (
           <div className="featured-loading-overlay" aria-live="polite" aria-busy="true">
             <div className="spinner" />
-            <span className="sr-only">Caricamento in corso…</span>
+            <span className="sr-only">Loading...</span>
           </div>
         )}
   
@@ -35,7 +35,7 @@ export default function HomeFilmFounded({ featured, imgLoading, isFetching, onIm
             style={imgLoading ? { opacity: 0 } : { opacity: 1, transition: "opacity 200ms ease" }}
           />
   
-          <button className="play-fab" aria-label="Guarda trailer">
+          <button className="play-fab" aria-label="See trailer">
             <IoPlayCircle />
           </button>
         </div>

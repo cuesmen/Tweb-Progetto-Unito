@@ -1,4 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import { fetchQuery, queryCache } from "./queryClient";
+
+const defaultEntry = {
+  status: "idle",
+  data: undefined,
+  error: null,
+  isFetching: false,
+  staleAt: 0,
+  inflight: null,
+};
 
 export function useApiQuery({
   queryKey,
@@ -7,29 +17,100 @@ export function useApiQuery({
   enabled = true,
   retry = 1,
   keepPreviousData = true,
+  staleTime = 60_000,
   onError,
 }) {
-  return useQuery({
-    queryKey,
-    queryFn: async (ctx) => {
-      const res = await queryFn(ctx);
+  const key = useMemo(() => queryKey.join("/"), [queryKey]);
 
-      if (res?.ok === false) {
-        const message = res?.error?.message || "Unknown error";
-        const err = new Error(message);
-        err.code = res?.error?.code;
-        throw err;
-      }
+  const subscribe = useCallback(
+    (listener) => queryCache.subscribe(key, listener),
+    [key]
+  );
 
-      const data = res?.data ?? res ?? null;
-      return select ? select(data) : data;
-    },
-    enabled,
-    retry,
-    keepPreviousData,
-    onError: (error) => {
-      console.error(`❌ API Query Error [${queryKey.join("/")}] →`, error);
+  const getSnapshot = useCallback(
+    () => queryCache.get(key) || defaultEntry,
+    [key]
+  );
+
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot);
+
+  useEffect(() => {
+    if (!enabled) return;
+    if (snapshot.inflight) return;
+
+    const now = Date.now();
+    const isStale = !snapshot.staleAt || now > snapshot.staleAt;
+    const shouldFetch =
+      snapshot.status === "idle" ||
+      snapshot.status === "error" ||
+      (!snapshot.data && snapshot.status !== "loading") ||
+      isStale;
+
+    if (!shouldFetch) return;
+
+    fetchQuery({
+      key,
+      queryFn,
+      retry,
+      keepPreviousData,
+      staleTime,
+    }).catch((error) => {
+      console.error(`API Query Error [${key}] →`, error);
       if (onError) onError(error);
+    });
+  }, [
+    enabled,
+    key,
+    keepPreviousData,
+    onError,
+    queryFn,
+    retry,
+    snapshot.data,
+    snapshot.inflight,
+    snapshot.staleAt,
+    snapshot.status,
+    staleTime,
+  ]);
+
+  const refetch = useCallback(
+    async () => {
+      const data = await fetchQuery({
+        key,
+        queryFn,
+        retry,
+        keepPreviousData,
+        staleTime,
+      });
+      return { data };
     },
-  });
+    [keepPreviousData, key, queryFn, retry, staleTime]
+  );
+
+  const selectCacheRef = useRef({ raw: undefined, selected: null });
+
+  if (snapshot.data !== selectCacheRef.current.raw) {
+    selectCacheRef.current = {
+      raw: snapshot.data,
+      selected:
+        select && snapshot.data !== undefined
+          ? select(snapshot.data)
+          : snapshot.data ?? null,
+    };
+  }
+
+  const selectedData = selectCacheRef.current.selected;
+
+  const isLoading = snapshot.status === "loading" && !snapshot.data;
+  const isFetching = snapshot.isFetching;
+  const isError = snapshot.status === "error";
+
+  return {
+    data: selectedData,
+    error: snapshot.error,
+    status: snapshot.status,
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  };
 }

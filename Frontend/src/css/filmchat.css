@@ -16,6 +16,7 @@
   gap: clamp(18px, 2.5vw, 26px);
   isolation: isolate;
   overflow: hidden;
+  height: fit-content;
 }
 
 .film-chat::after {
@@ -346,4 +347,11 @@
     transition: none !important;
     animation: none !important;
   }
+}
+
+
+.global-chat-main{
+  padding: 20px;
+  padding-top: 20px;
+  padding-bottom: 70px;
 }

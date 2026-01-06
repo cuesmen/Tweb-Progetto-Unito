@@ -5,7 +5,7 @@ import { FiSearch, FiUser, FiFilm, FiAlertCircle } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSearchQuery } from "../api/search/useSearchQuery";
 
-/** Debounce hook to avoid excessive API calls */
+// debounce hook to avoid excessive API calls
 function useDebouncedValue(value, delay = 500) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -15,7 +15,7 @@ function useDebouncedValue(value, delay = 500) {
   return debounced;
 }
 
-/** Single search result item */
+// single search result item component
 function SearchResult({ result, onClick }) {
   return (
     <div className="search-item" onClick={onClick}>
@@ -53,13 +53,15 @@ export default function Navbar() {
 
   const debouncedQuery = useDebouncedValue(query, 500);
 
-  // Query search results
+ // Fetch search results when debounced query changes
   const {
-    data: results = [],
+    data: resultsRaw,
     isLoading,
     isError,
     error,
   } = useSearchQuery(debouncedQuery);
+
+  const results = Array.isArray(resultsRaw) ? resultsRaw : [];
 
   const errorMsg =
     error?.message ||
@@ -103,7 +105,7 @@ export default function Navbar() {
   }, []);
     
 
-  // Close search dropdown when clicking outside
+  // close search dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -163,6 +165,7 @@ export default function Navbar() {
 
         <div className={`nav-links ${scrolled ? "scrolled" : ""}`}>
           <NavLink to="/" end>Home</NavLink>
+          <NavLink to="/global-chat" end>Global Chat</NavLink>
         </div>
       </div>
 

@@ -11,7 +11,6 @@ const NO_POSTER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='230' height='345'><rect width='100%' height='100%' fill='%23151515'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-family='sans-serif' font-size='14'>No poster</text></svg>";
 
 export default function Home() {
-  const [activeFilter, setActiveFilter] = useState("Top Rated");
   const [featured, setFeatured] = useState(null);
   const [showError, setShowError] = useState(true);
   const [imgLoading, setImgLoading] = useState(false);
@@ -79,16 +78,15 @@ export default function Home() {
       {isError && showError ? (
         <Alert
           type="error"
-          title="Errore durante il caricamento"
-          description={error?.message || "Si è verificato un errore inatteso."}
+          title="Error during the fetch"
+          description={error?.message || "An unknown error occurred while fetching a random movie."}
           dismissible
-          onClose={() => setShowError(false)}
         />
       ) : showNotFound ? (
         <Alert
           type="warning"
-          title="Nessun film disponibile"
-          description="Non siamo riusciti a trovare un film in evidenza al momento."
+          title="No featured movie found"
+          description="Couldn't find a featured movie to display. Please try shuffling again."
         />
       ) : (
         <div className="home glass-scene">
@@ -98,7 +96,6 @@ export default function Home() {
 
           <section className="home-hero glass-card">
             <HomeTopSearch
-              activeFilter={activeFilter}
               onShuffle={handleShuffle}
               isFetching={!!isFetching}
             />

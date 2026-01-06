@@ -2,21 +2,21 @@ import { useApiQuery } from "../useApiQuery";
 import { MovieService } from "./movieService";
 
 /**
- * Accetta:
+ * Accepts:
  * - { ok, data: [...] }
  * - { ok, data: { "0": {...}, "1": {...}, ..., "cast": [] } }
- * - direttamente un array
+ * - direct array [...]
  */
 const mapPreviewList = (raw) => {
-  // prova a unwrappare varie forme
+  // try to extract the actual payload
   const payload = raw?.data?.data ?? raw?.data ?? raw;
 
   if (Array.isArray(payload)) return payload;
 
   if (payload && typeof payload === "object") {
-    // converte oggetto con chiavi numeriche in array
+    // convert to array
     const values = Object.values(payload);
-    // filtra solo item che hanno un id (evita "cast": [])
+    // filter out non-object entries (like "cast" etc)
     return values.filter((it) => it && typeof it === "object" && "id" in it);
   }
 

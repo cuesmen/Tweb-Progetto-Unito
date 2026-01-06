@@ -5,7 +5,7 @@ const timeFormatter = new Intl.DateTimeFormat("it-IT", {
   minute: "2-digit",
 });
 
-function FilmChatMessage({ message, isSelf }) {
+function ChatMessage({ message, isSelf }) {
   const displayAuthor = message?.author?.trim() || "Anonimo";
   const timestamp = message?.timestamp ?? Date.now();
   const timeLabel = timeFormatter.format(timestamp);
@@ -34,4 +34,4 @@ function FilmChatMessage({ message, isSelf }) {
   );
 }
 
-export default memo(FilmChatMessage);
+export default memo(ChatMessage);

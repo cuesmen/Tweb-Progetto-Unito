@@ -1,0 +1,18 @@
+{
+    "source": {
+        "include": [
+            "src"
+        ],
+        "includePattern": ".+\\.js(doc|x)?$"
+    },
+    "opts": {
+        "destination": "docs",
+        "recurse": true,
+        "template": "templates/default"
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true
+    }
+}

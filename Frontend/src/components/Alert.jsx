@@ -10,12 +10,12 @@ import {
 const TYPE_MAP = {
   error: {
     icon: FiXCircle,
-    label: "Errore",
+    label: "Error",
     tone: "#ff6b6b",
   },
   warning: {
     icon: FiAlertTriangle,
-    label: "Attenzione",
+    label: "Warning",
     tone: "#ffd166",
   },
   info: {
@@ -25,7 +25,7 @@ const TYPE_MAP = {
   },
   success: {
     icon: FiCheckCircle,
-    label: "Successo",
+    label: "Success",
     tone: "#7bd88f",
   },
 };

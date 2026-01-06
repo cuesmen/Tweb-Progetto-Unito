@@ -45,7 +45,7 @@ export const chatService = {
   async listByMovie(movieId, { limit = 20, cursor = null, signal } = {}) {
     const params = { limit };
     if (cursor) params.cursor = cursor;
-    const movie = String(movieId); // coerciamo (da long/number) a string
+    const movie = String(movieId); // long/number to string conversion
     const res = await axiosClient.get(`/chat/movie/${encodeURIComponent(movie)}/messages`, { params, signal });
     return mapList(okOrThrow(res).data);
   },
