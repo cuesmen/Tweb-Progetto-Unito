@@ -2,7 +2,6 @@ import axiosClient from "../axiosClient";
 
 /**
  * Service for interacting with the Movie API.
- * @module api/movie/movieService
  * @category API
  */
 export class MovieService {

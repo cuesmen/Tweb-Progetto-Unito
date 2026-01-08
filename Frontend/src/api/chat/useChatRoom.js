@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { chatService } from "./chatService";
+import { ChatService } from "./chatService";
 import ChatMessage from "../../models/ChatMessage";
 
 /**
@@ -7,7 +7,7 @@ import ChatMessage from "../../models/ChatMessage";
  * Room formats:
  *  - "global"
  *  - `movie:${movieId}`
- * @module api/chat/useChatRoom
+ * @module useChatRoom
  * @category API
  * @param {string} room
  * @param {Object} [options]
@@ -67,13 +67,13 @@ export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
     try {
       let page;
       if (isGlobal) {
-        page = await chatService.listGlobal({
+        page = await ChatService.listGlobal({
           limit: pageSize,
           cursor,
           signal: controller.signal,
         });
       } else {
-        page = await chatService.listByMovie(movieId, {
+        page = await ChatService.listByMovie(movieId, {
           limit: pageSize,
           cursor,
           signal: controller.signal,
@@ -110,11 +110,11 @@ export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
 
       try {
         const saved = isGlobal
-          ? await chatService.sendGlobal(
+          ? await ChatService.sendGlobal(
               { username, text },
               { signal: controller.signal }
             )
-          : await chatService.sendToMovie(
+          : await ChatService.sendToMovie(
               movieId,
               { username, text },
               { signal: controller.signal }

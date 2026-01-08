@@ -4,7 +4,7 @@ import Movie from "../../models/Movie";
 
 /**
  * Query hook for a single movie by id.
- * @module api/movie/useMovieQuery
+ * @module useMovieQuery
  * @category API
  * @param {string|number} id
  */
@@ -17,7 +17,7 @@ export function useMovieQuery(id) {
       } catch (err) {
         const status = err?.response?.status;
         if (status === 404) return null;
-        if (err?.name === "CanceledError" || err?.name === "AbortError") throw err;
+        // On any other error (including aborted), return null so cache goes success and stops refetch loop.
         return null;
       }
     },

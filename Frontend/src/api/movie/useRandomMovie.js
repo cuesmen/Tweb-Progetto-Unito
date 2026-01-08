@@ -4,7 +4,7 @@ import Movie from "../../models/Movie";
 
 /**
  * Query hook that fetches a random movie.
- * @module api/movie/useRandomMovie
+ * @module useRandomMovie
  * @category API
  * @param {boolean} [enabled=false]
  */

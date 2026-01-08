@@ -1,6 +1,6 @@
 /**
  * Tiny query cache and fetch helper used by useApiQuery.
- * @module api/queryClient
+ * @module queryClient
  * @category API
  */
 

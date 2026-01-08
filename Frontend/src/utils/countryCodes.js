@@ -1,3 +1,8 @@
+/**
+ * Country name → ISO2 conversion helpers with manual overrides.
+ * @module countryCodes
+ * @category Utils
+ */
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 countries.registerLocale(enLocale);

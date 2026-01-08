@@ -1,4 +1,9 @@
 /**
+ * Review domain model.
+ * @module Review
+ * @category Models
+ */
+/**
    * @typedef {Object} ReviewApi
    * @property {number} id
    * @property {number} movieId
@@ -11,6 +16,7 @@
    * @property {string} review_content
    */
 
+/** @private */
 export default class Review {
     /**
      * @param {ReviewApi} args

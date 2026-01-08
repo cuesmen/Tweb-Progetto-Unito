@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mapPreviewList">mapPreviewList</a></li></ul></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-api_actor_useActorInfoQuery.html">api/actor/useActorInfoQuery</a></li><li><a href="module-api_axiosClient.html">api/axiosClient</a></li><li><a href="module-api_chat_chatService.html">api/chat/chatService</a></li><li><a href="module-api_chat_useChatRoom.html">api/chat/useChatRoom</a></li><li><a href="module-api_movie_movieService.html">api/movie/movieService</a></li><li><a href="module-api_movie_useMovieQuery.html">api/movie/useMovieQuery</a></li><li><a href="module-api_movie_useRandomMovie.html">api/movie/useRandomMovie</a></li><li><a href="module-api_movie_useTopLatestMovies.html">api/movie/useTopLatestMovies</a></li><li><a href="module-api_queryClient.html">api/queryClient</a></li><li><a href="module-api_search_searchService.html">api/search/searchService</a></li><li><a href="module-api_search_useSearchQuery.html">api/search/useSearchQuery</a></li><li><a href="module-api_useApiQuery.html">api/useApiQuery</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-axiosClient.html">axiosClient</a></li><li><a href="module-queryClient.html">queryClient</a></li><li><a href="module-useActorInfoQuery.html">useActorInfoQuery</a></li><li><a href="module-useApiQuery.html">useApiQuery</a></li><li><a href="module-useChatRoom.html">useChatRoom</a></li><li><a href="module-useMovieQuery.html">useMovieQuery</a></li><li><a href="module-useOscarAwardQuery.html">useOscarAwardQuery</a></li><li><a href="module-useRandomMovie.html">useRandomMovie</a></li><li><a href="module-useReviewQuery.html">useReviewQuery</a></li><li><a href="module-useSearchQuery.html">useSearchQuery</a></li><li><a href="module-useTopLatestMovies.html">useTopLatestMovies</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li><li><a href="ChatService.html">ChatService</a></li><li><a href="MovieService.html">MovieService</a></li><li><a href="OscarAwardService.html">OscarAwardService</a></li><li><a href="ReviewService.html">ReviewService</a></li><li><a href="SearchService.html">SearchService</a></li></ul></div><div class="category"><h2>Models</h2><h3>Modules</h3><ul><li><a href="module-ActorInfo.html">ActorInfo</a></li><li><a href="module-ChatMessage.html">ChatMessage</a></li><li><a href="module-ChatMeta.html">ChatMeta</a></li><li><a href="module-Movie.html">Movie</a></li><li><a href="module-OscarAward.html">OscarAward</a></li><li><a href="module-Review.html">Review</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-countryCodes.html">countryCodes</a></li></ul></div>
                 
             </nav>
         </div>
@@ -97,6 +97,7 @@ import { MovieService } from "./movieService";
  * - { ok, data: [...] }
  * - { ok, data: { "0": {...}, "1": {...}, ..., "cast": [] } }
  * - direct array [...]
+ * @private
  */
 const mapPreviewList = (raw) => {
   // try to extract the actual payload
@@ -116,7 +117,7 @@ const mapPreviewList = (raw) => {
 
 /**
  * Query hook for top-rated movies list.
- * @module api/movie/useTopLatestMovies
+ * @module useTopLatestMovies
  * @category API
  * @param {number} [limit=10]
  * @param {boolean} [enabled=true]
@@ -134,7 +135,7 @@ export function useTopRatedMovies(limit = 10, enabled = true) {
 
 /**
  * Query hook for latest movies list.
- * @module api/movie/useTopLatestMovies
+ * @module useTopLatestMovies
  * @category API
  * @param {number} [limit=10]
  * @param {boolean} [enabled=true]

@@ -3,8 +3,13 @@ import { OscarAwardService } from "./oscarAwardService";
 import OscarAward from "../../models/OscarAward";
 
 /**
- * Carica gli Oscar Award per actorId o movieId (uno dei due).
- * @param {{ actorId?: number, movieId?: number, enabled?: boolean }} params
+ * Loads Oscar awards for either an actor or a movie (one of the two).
+ * @module useOscarAwardQuery
+ * @category API
+ * @param {Object} params
+ * @param {number} [params.actorId]
+ * @param {number} [params.movieId]
+ * @param {boolean} [params.enabled=true]
  */
 export function useOscarAwardQuery({ actorId, movieId, enabled = true }) {
   const key = actorId ? ["oscaraward", "actor", actorId] : movieId ? ["oscaraward", "movie", movieId] : null;

@@ -1,4 +1,9 @@
 /**
+ * Movie domain model with rich metadata and helpers.
+ * @module Movie
+ * @category Models
+ */
+/**
  * @typedef {{ id:number, link:string }} Poster
  * @typedef {{ id:number, theme:string }} Theme
  * @typedef {{ id:number, actorId:number, actorName:string, role:string }} CastItem
@@ -28,6 +33,7 @@
  * @property {LanguageItem[]} languages
  */
 
+/** @private */
 export default class Movie {
     /**
      * @param {Object} args

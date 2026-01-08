@@ -3,7 +3,7 @@ import { fetchQuery, queryCache } from "./queryClient";
 
 /**
  * Custom query hook built on the local query cache.
- * @module api/useApiQuery
+ * @module useApiQuery
  * @category API
  */
 
@@ -58,10 +58,11 @@ export function useApiQuery({
 
     const now = Date.now();
     const isStale = !snapshot.staleAt || now > snapshot.staleAt;
+    const noData = typeof snapshot.data === "undefined";
     const shouldFetch =
       snapshot.status === "idle" ||
       snapshot.status === "error" ||
-      (!snapshot.data && snapshot.status !== "loading") ||
+      (noData && snapshot.status !== "loading") ||
       isStale;
 
     if (!shouldFetch) return;

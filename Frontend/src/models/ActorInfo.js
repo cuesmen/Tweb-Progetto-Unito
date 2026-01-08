@@ -1,3 +1,8 @@
+/**
+ * Actor profile domain model.
+ * @module ActorInfo
+ * @category Models
+ */
 export default class ActorInfo {
     constructor({
       actorId,

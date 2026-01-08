@@ -91,7 +91,7 @@ export default function Alert({
           type="button"
           className="alert__close glass-pill"
           onClick={onClose}
-          aria-label="Chiudi alert"
+          aria-label="Close alert"
         >
           <FiX className="btn-icon" />
         </button>

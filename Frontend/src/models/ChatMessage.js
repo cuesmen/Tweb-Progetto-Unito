@@ -1,3 +1,8 @@
+/**
+ * Chat message domain model.
+ * @module ChatMessage
+ * @category Models
+ */
 export default class ChatMessage {
     constructor({ id, chatId, username, text, createdAt }) {
       Object.assign(this, { id, chatId, username, text, createdAt });

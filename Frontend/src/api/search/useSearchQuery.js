@@ -3,7 +3,7 @@ import { SearchService } from "./searchService";
 
 /**
  * Query hook for search results (movies + actors).
- * @module api/search/useSearchQuery
+ * @module useSearchQuery
  * @category API
  * @param {string} query
  * @returns {Object} query result

@@ -6,6 +6,7 @@ import { MovieService } from "./movieService";
  * - { ok, data: [...] }
  * - { ok, data: { "0": {...}, "1": {...}, ..., "cast": [] } }
  * - direct array [...]
+ * @private
  */
 const mapPreviewList = (raw) => {
   // try to extract the actual payload
@@ -25,7 +26,7 @@ const mapPreviewList = (raw) => {
 
 /**
  * Query hook for top-rated movies list.
- * @module api/movie/useTopLatestMovies
+ * @module useTopLatestMovies
  * @category API
  * @param {number} [limit=10]
  * @param {boolean} [enabled=true]
@@ -43,7 +44,7 @@ export function useTopRatedMovies(limit = 10, enabled = true) {
 
 /**
  * Query hook for latest movies list.
- * @module api/movie/useTopLatestMovies
+ * @module useTopLatestMovies
  * @category API
  * @param {number} [limit=10]
  * @param {boolean} [enabled=true]

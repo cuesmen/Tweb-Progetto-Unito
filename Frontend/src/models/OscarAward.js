@@ -1,4 +1,9 @@
 /**
+ * Oscar award domain model.
+ * @module OscarAward
+ * @category Models
+ */
+/**
  * @typedef {Object} OscarAwardApi
  * @property {number} id
  * @property {string} yearFilm
@@ -11,6 +16,7 @@
  * @property {number|null} movieId
  */
 
+/** @private */
 export default class OscarAward {
   /**
    * @param {OscarAwardApi} args

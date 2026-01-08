@@ -2,7 +2,6 @@ import axiosClient from "../axiosClient";
 
 /**
  * Service for search across movies and actors.
- * @module api/search/searchService
  * @category API
  */
 export class SearchService {

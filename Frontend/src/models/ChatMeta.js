@@ -1,3 +1,8 @@
+/**
+ * Chat metadata domain model.
+ * @module ChatMeta
+ * @category Models
+ */
 export default class ChatMeta {
     constructor({ chatId, type, movieId, createdAt, lastMessageAt, messagesCount }) {
       Object.assign(this, { chatId, type, movieId, createdAt, lastMessageAt, messagesCount });

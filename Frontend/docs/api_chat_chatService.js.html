@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mapPreviewList">mapPreviewList</a></li></ul></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-api_actor_useActorInfoQuery.html">api/actor/useActorInfoQuery</a></li><li><a href="module-api_axiosClient.html">api/axiosClient</a></li><li><a href="module-api_chat_chatService.html">api/chat/chatService</a></li><li><a href="module-api_chat_useChatRoom.html">api/chat/useChatRoom</a></li><li><a href="module-api_movie_movieService.html">api/movie/movieService</a></li><li><a href="module-api_movie_useMovieQuery.html">api/movie/useMovieQuery</a></li><li><a href="module-api_movie_useRandomMovie.html">api/movie/useRandomMovie</a></li><li><a href="module-api_movie_useTopLatestMovies.html">api/movie/useTopLatestMovies</a></li><li><a href="module-api_queryClient.html">api/queryClient</a></li><li><a href="module-api_search_searchService.html">api/search/searchService</a></li><li><a href="module-api_search_useSearchQuery.html">api/search/useSearchQuery</a></li><li><a href="module-api_useApiQuery.html">api/useApiQuery</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-axiosClient.html">axiosClient</a></li><li><a href="module-queryClient.html">queryClient</a></li><li><a href="module-useActorInfoQuery.html">useActorInfoQuery</a></li><li><a href="module-useApiQuery.html">useApiQuery</a></li><li><a href="module-useChatRoom.html">useChatRoom</a></li><li><a href="module-useMovieQuery.html">useMovieQuery</a></li><li><a href="module-useOscarAwardQuery.html">useOscarAwardQuery</a></li><li><a href="module-useRandomMovie.html">useRandomMovie</a></li><li><a href="module-useReviewQuery.html">useReviewQuery</a></li><li><a href="module-useSearchQuery.html">useSearchQuery</a></li><li><a href="module-useTopLatestMovies.html">useTopLatestMovies</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li><li><a href="ChatService.html">ChatService</a></li><li><a href="MovieService.html">MovieService</a></li><li><a href="OscarAwardService.html">OscarAwardService</a></li><li><a href="ReviewService.html">ReviewService</a></li><li><a href="SearchService.html">SearchService</a></li></ul></div><div class="category"><h2>Models</h2><h3>Modules</h3><ul><li><a href="module-ActorInfo.html">ActorInfo</a></li><li><a href="module-ChatMessage.html">ChatMessage</a></li><li><a href="module-ChatMeta.html">ChatMeta</a></li><li><a href="module-Movie.html">Movie</a></li><li><a href="module-OscarAward.html">OscarAward</a></li><li><a href="module-Review.html">Review</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-countryCodes.html">countryCodes</a></li></ul></div>
                 
             </nav>
         </div>
@@ -113,20 +113,19 @@ const mapList = (payload) => ({
 
 /**
  * Chat service client for global and movie rooms.
- * @module api/chat/chatService
  * @category API
  */
-export const chatService = {
+export class ChatService {
   /**
    * Checks chat service health.
    * @param {Object} [options]
    * @param {AbortSignal} [options.signal]
    * @returns {Promise&lt;any>} health payload
    */
-  async health({ signal } = {}) {
+  static async health({ signal } = {}) {
     const res = await axiosClient.get("/chat/health", { signal });
     return okOrThrow(res).data;
-  },
+  }
 
   /**
    * Lists global chat messages with cursor pagination.
@@ -136,12 +135,12 @@ export const chatService = {
    * @param {AbortSignal} [options.signal]
    * @returns {Promise&lt;Object>} page with items/nextCursor/hasMore
    */
-  async listGlobal({ limit = 20, cursor = null, signal } = {}) {
+  static async listGlobal({ limit = 20, cursor = null, signal } = {}) {
     const params = { limit };
     if (cursor) params.cursor = cursor;
     const res = await axiosClient.get("/chat/global/messages", { params, signal });
     return mapList(okOrThrow(res).data);
-  },
+  }
 
   /**
    * Sends a message to the global chat.
@@ -150,11 +149,11 @@ export const chatService = {
    * @param {AbortSignal} [options.signal]
    * @returns {Promise&lt;Object>} ChatMessage
    */
-  async sendGlobal({ username, text }, { signal } = {}) {
+  static async sendGlobal({ username, text }, { signal } = {}) {
     const res = await axiosClient.post("/chat/global/messages", { username, text }, { signal });
     const payload = okOrThrow(res).data?.message;
     return ChatMessage.fromApi(payload);
-  },
+  }
 
   /**
    * Lists messages for a movie-specific chat.
@@ -165,13 +164,13 @@ export const chatService = {
    * @param {AbortSignal} [options.signal]
    * @returns {Promise&lt;Object>} page with items/nextCursor/hasMore
    */
-  async listByMovie(movieId, { limit = 20, cursor = null, signal } = {}) {
+  static async listByMovie(movieId, { limit = 20, cursor = null, signal } = {}) {
     const params = { limit };
     if (cursor) params.cursor = cursor;
     const movie = String(movieId); // long/number to string conversion
     const res = await axiosClient.get(`/chat/movie/${encodeURIComponent(movie)}/messages`, { params, signal });
     return mapList(okOrThrow(res).data);
-  },
+  }
 
   /**
    * Sends a message to a movie chat.
@@ -181,7 +180,7 @@ export const chatService = {
    * @param {AbortSignal} [options.signal]
    * @returns {Promise&lt;Object>} ChatMessage
    */
-  async sendToMovie(movieId, { username, text }, { signal } = {}) {
+  static async sendToMovie(movieId, { username, text }, { signal } = {}) {
     const movie = String(movieId);
     const res = await axiosClient.post(
       `/chat/movie/${encodeURIComponent(movie)}/messages`,
@@ -190,7 +189,7 @@ export const chatService = {
     );
     const payload = okOrThrow(res).data?.message;
     return ChatMessage.fromApi(payload);
-  },
+  }
 
   /**
    * Fetches metadata (participants/count) for a movie chat.
@@ -199,13 +198,13 @@ export const chatService = {
    * @param {AbortSignal} [options.signal]
    * @returns {Promise&lt;Object|null>} ChatMeta or null
    */
-  async getMovieMeta(movieId, { signal } = {}) {
+  static async getMovieMeta(movieId, { signal } = {}) {
     const movie = String(movieId);
     const res = await axiosClient.get(`/chat/movie/${encodeURIComponent(movie)}`, { signal });
     const raw = okOrThrow(res).data;
     return raw ? ChatMeta.fromApi(raw) : null;
-  },
-};
+  }
+}
 </code></pre>
         </article>
     </section>

@@ -1,7 +1,8 @@
 import axiosClient from "../axiosClient";
 
 /**
- * Service per Oscar Awards.
+ * Service for interatcing with the Oscar Awards API.
+ * @category API
  */
 export class OscarAwardService {
   /**

@@ -4,7 +4,7 @@ import Review from "../../models/Review";
 
 /**
  * Loads reviews with caching via useApiQuery.
- * @module api/review/useReviewQuery
+ * @module useReviewQuery
  * @category API
  * @param {string|number} id
  * @returns {Object} query result
