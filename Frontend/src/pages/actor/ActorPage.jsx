@@ -13,6 +13,7 @@ import {
   FiArrowRight,
   FiAlertCircle,
 } from "react-icons/fi";
+import OscarAwards from "../../components/OscarAwards";
 
 function formatDate(d) {
   if (!d) return null;
@@ -203,6 +204,9 @@ export default function ActorPage() {
             </div>
           </section>
         </div>
+      </div>
+      <div className="actor-oscars">
+        <OscarAwards actorId={actorId} showFilm={true} />
       </div>
     </DefaultPage>
   );

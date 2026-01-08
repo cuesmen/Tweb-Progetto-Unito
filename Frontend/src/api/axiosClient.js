@@ -1,10 +1,15 @@
 import axios from "axios";
 
+/**
+ * Shared Axios client configured for the backend API.
+ * Use this instead of creating new axios instances to inherit interceptors and base URL.
+ * @module api/axiosClient
+ * @category API
+ */
 const axiosClient = axios.create({
   baseURL: "http://localhost:4000/api",
   headers: { Accept: "application/json" },
 });
-
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {

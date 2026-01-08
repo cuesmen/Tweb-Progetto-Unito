@@ -3,9 +3,16 @@ import { chatService } from "./chatService";
 import ChatMessage from "../../models/ChatMessage";
 
 /**
- * room:
+ * Hook to manage chat messages for a room (global or movie-specific) with pagination and socket updates.
+ * Room formats:
  *  - "global"
  *  - `movie:${movieId}`
+ * @module api/chat/useChatRoom
+ * @category API
+ * @param {string} room
+ * @param {Object} [options]
+ * @param {number} [options.pageSize]
+ * @param {Object|null} [options.socket] socket.io-client instance
  */
 export function useChatRoom(room, { pageSize = 20, socket = null } = {}) {
   const isGlobal = room === "global";

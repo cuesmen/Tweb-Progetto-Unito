@@ -1,6 +1,13 @@
 import { useApiQuery } from "../useApiQuery";
 import { SearchService } from "./searchService";
 
+/**
+ * Query hook for search results (movies + actors).
+ * @module api/search/useSearchQuery
+ * @category API
+ * @param {string} query
+ * @returns {Object} query result
+ */
 export function useSearchQuery(query) {
   return useApiQuery({
     queryKey: ["search", query],

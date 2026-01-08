@@ -3,15 +3,24 @@
         "include": [
             "src"
         ],
-        "includePattern": ".+\\.js(doc|x)?$"
+        "includePattern": "\\.(js|jsx)$",
+        "excludePattern": "(node_modules|docs)"
     },
     "opts": {
         "destination": "docs",
         "recurse": true,
-        "template": "templates/default"
+        "template": "node_modules/better-docs",
+        "readme": "README.md"
     },
-    "plugins": [],
+    "sourceType": "module",
+    "plugins": [
+        "plugins/markdown",
+        "node_modules/better-docs/category"
+      ],
     "templates": {
+        "better-docs": {
+            "name": "Project Docs"
+        },
         "cleverLinks": true,
         "monospaceLinks": true
     }

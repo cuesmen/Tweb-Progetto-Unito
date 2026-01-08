@@ -1,3 +1,13 @@
+/**
+ * Tiny query cache and fetch helper used by useApiQuery.
+ * @module api/queryClient
+ * @category API
+ */
+
+/**
+ * Creates an empty cache entry skeleton.
+ * @returns {{status: string, data: any, error: any, staleAt: number, inflight: Promise<any>|null, isFetching: boolean, listeners: Set<Function>}}
+ */
 const createEmptyEntry = () => {
   return {
     status: "idle",
@@ -15,10 +25,21 @@ class QueryCache {
     this.store = new Map();
   }
 
+  /**
+   * Returns the cached entry for a key.
+   * @param {string} key
+   * @returns {Object|undefined}
+   */
   get(key) {
     return this.store.get(key);
   }
 
+  /**
+   * Writes an entry and notifies subscribers.
+   * @param {string} key
+   * @param {object|function} updater - Object or updater function receiving previous entry.
+   * @returns {object} next entry
+   */
   write(key, updater) {
     const prev = this.store.get(key) || createEmptyEntry();
     const next = typeof updater === "function" ? updater(prev) : updater;
@@ -27,6 +48,12 @@ class QueryCache {
     return next;
   }
 
+  /**
+   * Subscribes to changes for a key.
+   * @param {string} key
+   * @param {Function} listener
+   * @returns {Function} unsubscribe
+   */
   subscribe(key, listener) {
     const entry = this.store.get(key) || createEmptyEntry();
     entry.listeners.add(listener);
@@ -42,6 +69,16 @@ class QueryCache {
 
 export const queryCache = new QueryCache();
 
+/**
+ * Fetches data for a query key, handling deduplication, retries and caching.
+ * @param {object} params
+ * @param {string} params.key - Cache key.
+ * @param {Function} params.queryFn - Async fetcher receiving { signal }.
+ * @param {number} [params.staleTime=0] - Milliseconds before data considered stale; `Infinity` never stale.
+ * @param {number} [params.retry=0] - Number of retry attempts.
+ * @param {boolean} [params.keepPreviousData=true] - Preserve previous data while refetching.
+ * @returns {Promise<any>} resolved data.
+ */
 export async function fetchQuery({
   key,
   queryFn,

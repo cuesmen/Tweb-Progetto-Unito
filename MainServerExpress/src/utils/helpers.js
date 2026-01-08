@@ -11,7 +11,7 @@ export async function trySpringGet(paths, req) {
       const { data } = await spring.get(url, { params: req.query });
       return data;
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       lastErr = err;
       throw err;
     }

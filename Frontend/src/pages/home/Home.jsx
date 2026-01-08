@@ -14,11 +14,15 @@ export default function Home() {
   const [featured, setFeatured] = useState(null);
   const [showError, setShowError] = useState(true);
   const [imgLoading, setImgLoading] = useState(false);
+  const [pending, setPending] = useState(true);
 
   const { data, isError, error, isLoading, isFetching, refetch } = useRandomMovie(false);
 
   useEffect(() => {
-    if (data) setFeatured(data);
+    if (data) {
+      setFeatured(data);
+      setPending(false);
+    }
   }, [data]);
 
   useEffect(() => {
@@ -35,12 +39,14 @@ export default function Home() {
   }, [featured]);
 
   async function handleShuffle() {
+    setPending(true);
     setImgLoading(true);
     try {
       const res = await refetch?.();
       const next = res?.data;
       if (next) {
         setFeatured(next);
+        setPending(false);
       } else {
         setFeatured({
           id: -1,
@@ -51,6 +57,7 @@ export default function Home() {
           poster: { link: NO_POSTER },
         });
         setImgLoading(false);
+        setPending(false);
       }
     } catch (err) {
       console.error(err);
@@ -63,10 +70,11 @@ export default function Home() {
         poster: { link: NO_POSTER },
       });
       setImgLoading(false);
+      setPending(false);
     }
   }
 
-  const showNotFound = !isLoading && !isError && !featured;
+  const showNotFound = !pending && !isLoading && !isError && !featured;
 
   return (
     <DefaultPage

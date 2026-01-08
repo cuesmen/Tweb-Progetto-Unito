@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { fetchQuery, queryCache } from "./queryClient";
 
+/**
+ * Custom query hook built on the local query cache.
+ * @module api/useApiQuery
+ * @category API
+ */
+
 const defaultEntry = {
   status: "idle",
   data: undefined,
@@ -10,6 +16,18 @@ const defaultEntry = {
   inflight: null,
 };
 
+/**
+ * Hook that mirrors a subset of react-query features using the local query cache.
+ * @param {object} params
+ * @param {Array<string|number>} params.queryKey - Unique key for the query.
+ * @param {Function} params.queryFn - Fetcher function receiving { signal }.
+ * @param {Function} [params.select] - Optional selector for the fetched data.
+ * @param {boolean} [params.enabled=true] - Whether the query is active.
+ * @param {number} [params.retry=1] - Retry attempts on failure.
+ * @param {boolean} [params.keepPreviousData=true] - Keep old data while refetching.
+ * @param {number} [params.staleTime=60000] - Time in ms before data becomes stale.
+ * @param {Function} [params.onError] - Error callback.
+ */
 export function useApiQuery({
   queryKey,
   queryFn,

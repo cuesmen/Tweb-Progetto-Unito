@@ -1,0 +1,228 @@
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.oscar-section {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  isolation: isolate;
+}
+
+.oscar-toggle {
+  width: 100%;
+  border: 1px solid rgba(158, 203, 255, 0.35);
+  background: transparent;
+  color: #e8f1ff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.oscar-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(7, 16, 32, 0.35);
+}
+
+
+.oscar-toggle.is-open {
+  background: linear-gradient(130deg, rgba(76, 143, 230, 0.068), rgba(38, 96, 170, 0.62));
+}
+
+.oscar-toggle__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.oscar-toggle__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.oscar-toggle__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 20px;
+}
+
+.oscar-toggle__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.oscar-toggle__subtitle {
+  color: rgba(230, 240, 255, 0.8);
+}
+
+.oscar-toggle__chevron {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 20px;
+  transform: rotate(0deg);
+  transition: transform 0.25s ease;
+}
+
+.oscar-toggle.is-open .oscar-toggle__chevron {
+  transform: rotate(-180deg);
+}
+
+.oscar-dropdown {
+  margin-top: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 28, 48, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  overflow: hidden;
+  transition: max-height 0.5s ease, opacity 0.35s ease, transform 0.4s ease;
+}
+
+.oscar-dropdown.is-open {
+  max-height: 70vh;
+  opacity: 1;
+  transform: translateY(0);
+  overflow-y: auto;
+}
+
+.oscar-empty {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  color: rgba(225, 235, 255, 0.88);
+}
+
+.oscar-empty.is-error {
+  color: #ffdede;
+}
+
+.oscar-list {
+  list-style: none;
+  margin: 0;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.oscar-card {
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color: #e8f1ff;
+  display: grid;
+  gap: 8px;
+}
+
+.oscar-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.oscar-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(158, 203, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.oscar-year {
+  color: rgba(220, 235, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.oscar-category {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.oscar-name,
+.oscar-film {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(230, 240, 255, 0.9);
+}
+
+.oscar-winner {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.oscar-winner.is-winner {
+  background: rgba(80, 200, 140, 0.2);
+  border: 1px solid rgba(80, 200, 140, 0.5);
+  color: #c7f5dd;
+}
+
+.oscar-winner.is-nominee {
+  background: rgba(255, 207, 92, 0.15);
+  border: 1px solid rgba(255, 207, 92, 0.4);
+  color: #ffe7a8;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .oscar-section { padding: 12px; }
+  .oscar-toggle { align-items: flex-start; }
+  .oscar-list { padding: 12px; }
+}
+
+
+.actor-oscars{
+  margin-top: -30px;
+  margin-bottom: 60px;
+}

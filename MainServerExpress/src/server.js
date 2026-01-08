@@ -11,6 +11,8 @@ import moviesRoutes from './routes/movies.js';
 import actorsRoutes from './routes/actors.js';
 import searchRoutes from './routes/search.js';
 import mongoRoutes from './routes/mongo.js'; 
+import reviewsRoutes from './routes/reviewmovie.js';
+import oscarRoutes from './routes/oscarawards.js';
 
 const app = express();
 app.use(cors({ origin: ENV.SPA_ORIGIN, credentials: true }));
@@ -21,6 +23,8 @@ app.use('/api', moviesRoutes);
 app.use('/api', actorsRoutes);
 app.use('/api', searchRoutes);
 app.use('/api', mongoRoutes);
+app.use('/api', reviewsRoutes);
+app.use('/api', oscarRoutes);
 
 app.use((err, _req, res, _next) => {
   const status = err.response?.status || err.statusCode || 500;

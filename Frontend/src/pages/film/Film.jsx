@@ -9,6 +9,8 @@ import FilmCrewCarousel from "./FilmCrewCarousel";
 import FilmChat from "./FilmChat";
 import Alert from "../../components/Alert";
 import { useMovieQuery } from "../../api/movie/useMovieQuery";
+import FilmReviews from "./FilmReviews";
+import OscarAwards from "../../components/OscarAwards";
 
 export default function Film() {
   const { id } = useParams();
@@ -47,6 +49,8 @@ export default function Film() {
           <FilmInfos movie={movie} />
           <FilmCrewCarousel movie={movie} isActor />
           <FilmCrewCarousel movie={movie} />
+          <FilmReviews movie={movie} />
+          <OscarAwards showFilm={false} movieId={movie.id}/>
           <FilmChat movie={movie} />
         </div>
       ) : null}

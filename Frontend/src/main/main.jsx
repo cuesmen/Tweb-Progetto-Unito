@@ -7,6 +7,8 @@ import '../css/home.css'
 import '../css/homecarousel.css'
 import '../css/actor.css'
 import '../css/filmchat.css'
+import '../css/filmreviews.css'
+import '../css/oscarawards.css'
 import 'flag-icons/css/flag-icons.min.css';
 import AppRoutes from '../navigation/Routes.jsx'
 import { LoaderProvider } from '../hooks/LoaderProvider.jsx';

@@ -34,6 +34,35 @@ public final class Mappers {
         );
     }
 
+    public static ReviewMovieDTO toReviewMovieDTO(ReviewMovie reviewMovie){
+        if(reviewMovie == null) return null;
+        return new ReviewMovieDTO(
+                reviewMovie.getId(),
+                reviewMovie.getMovie() != null ? reviewMovie.getMovie().getId() : null,
+                reviewMovie.getCritic_name(),
+                reviewMovie.isTop_critic(),
+                reviewMovie.getPublisher_name(),
+                reviewMovie.getReview_type(),
+                reviewMovie.getReview_score(),
+                reviewMovie.getReview_date(),
+                reviewMovie.getReview_content());
+    }
+
+    public static OscarAwardDTO toOscarAwardDTO(OscarAward award) {
+        if (award == null) return null;
+        return new OscarAwardDTO(
+                award.getId(),
+                award.getYearFilm(),
+                award.getYearCeremony(),
+                award.getCategory(),
+                award.getName(),
+                award.getFilm(),
+                award.getWinner(),
+                award.getActor() != null ? award.getActor().getId() : null,
+                award.getMovie() != null ? award.getMovie().getId() : null
+        );
+    }
+
     private static PosterDTO toPosterDTO(Poster p) {
         if (p == null) return null;
         return new PosterDTO(p.getId(), p.getLink());

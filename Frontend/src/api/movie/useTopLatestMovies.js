@@ -23,6 +23,13 @@ const mapPreviewList = (raw) => {
   return [];
 };
 
+/**
+ * Query hook for top-rated movies list.
+ * @module api/movie/useTopLatestMovies
+ * @category API
+ * @param {number} [limit=10]
+ * @param {boolean} [enabled=true]
+ */
 export function useTopRatedMovies(limit = 10, enabled = true) {
   return useApiQuery({
     queryKey: ["movies", "top-rated", limit],
@@ -34,6 +41,13 @@ export function useTopRatedMovies(limit = 10, enabled = true) {
   });
 }
 
+/**
+ * Query hook for latest movies list.
+ * @module api/movie/useTopLatestMovies
+ * @category API
+ * @param {number} [limit=10]
+ * @param {boolean} [enabled=true]
+ */
 export function useLatestMovies(limit = 10, enabled = true) {
   return useApiQuery({
     queryKey: ["movies", "latest", limit],

@@ -2,6 +2,12 @@ import { useApiQuery } from "../useApiQuery";
 import { MovieService } from "./movieService";
 import Movie from "../../models/Movie";
 
+/**
+ * Query hook that fetches a random movie.
+ * @module api/movie/useRandomMovie
+ * @category API
+ * @param {boolean} [enabled=false]
+ */
 export function useRandomMovie(enabled = false) {
   return useApiQuery({
     queryKey: ["movie", "random"],
