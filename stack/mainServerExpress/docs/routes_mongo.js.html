@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> routes/mongo.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">MainServerExpress Docs</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>routes/mongo.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Chat routes backed by MongoDB.
+ * @module mongo
+ * @category Routes
+ */
+
+import { Router } from 'express';
+import { getCollection, mongoHealth } from '../mongodb/mongo.js';
+import { ObjectId, Int32 } from 'mongodb';
+
+const router = Router();
+
+/**
+ * @openapi
+ * tags:
+ *   - name: Chat
+ *     description: Chat API (global and per-movie)
+ */
+
+/**
+ * @openapi
+ * /api/chat/health:
+ *   get:
+ *     tags: [Chat]
+ *     summary: MongoDB health check and collection status
+ *     responses:
+ *       200:
+ *         description: MongoDB state and chat/messages collections
+ */
+router.get('/chat/health', async (_req, res, next) => {
+  try {
+    const h = await mongoHealth();
+    const db = await getCollection('messages').then(c => c.db);
+    const cols = await db.listCollections({}, { nameOnly: true }).toArray();
+    res.json({ ok: true, data: { mongo: h, collections: cols.map(c => c.name) }, error: null });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/** Common helpers */
+const MAX_TEXT = 2000;
+const MAX_USERNAME = 50;
+
+function normalizeUsername(u) {
+  const s = String(u ?? '').trim();
+  if (!s || s.length > MAX_USERNAME) return null;
+  return s;
+}
+function normalizeText(t) {
+  const s = String(t ?? '').trim();
+  if (!s || s.length > MAX_TEXT) return null;
+  return s;
+}
+function makeMovieChatId(movieId) {
+  return `movie:${String(movieId)}`;
+}
+
+/** Upsert chat document ensuring counters are updated without $setOnInsert/$inc collisions. */
+async function upsertChat({ chatId, type, movieId = null, now }) {
+  const chats = await getCollection('chats');
+
+  // try to update if chat already exists
+  const upd = await chats.updateOne(
+    { chatId },
+    {
+      $set: { lastMessageAt: now },
+      $inc: { messagesCount: new Int32(1) },
+    }
+  );
+
+  if (upd.matchedCount === 1) {
+    // fetch and return updated document
+    return await chats.findOne({ chatId });
+  }
+
+  // if it does not exist, create with messagesCount = 1
+  const doc = {
+    chatId,
+    type,              // 'global' | 'movie'
+    movieId,           
+    createdAt: now,
+    lastMessageAt: now,
+    messagesCount: new Int32(1),
+  };
+
+  await chats.insertOne(doc);
+  return doc;
+}
+
+
+/** Insert a message and broadcast it on socket.io (room = chatId). */
+async function insertMessageAndBroadcast({ req, chatId, username, text, now }) {
+  const messages = await getCollection('messages');
+  const doc = {
+    chatId,
+    author: { username },
+    text,
+    createdAt: now
+  };
+  const result = await messages.insertOne(doc);
+  const saved = { _id: result.insertedId, ...doc };
+
+  const io = req.app.get('io');
+  if (io) io.to(chatId).emit('chat:message', saved);
+
+  return saved;
+}
+
+/**
+ * @openapi
+ * /api/chat/global/messages:
+ *   post:
+ *     tags: [Chat]
+ *     summary: Send a message to the global chat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, text]
+ *             properties:
+ *               username: { type: string, maxLength: 50 }
+ *               text: { type: string, maxLength: 2000 }
+ *     responses:
+ *       201:
+ *         description: Message created
+ */
+router.post('/chat/global/messages', async (req, res, next) => {
+  try {
+    const username = normalizeUsername(req.body?.username);
+    const text = normalizeText(req.body?.text);
+    if (!username) {
+      return res.status(400).json({ ok: false, data: null, error: { code: 'BAD_REQUEST', message: '`username` is required (&lt;=50 chars)' } });
+    }
+    if (!text) {
+      return res.status(400).json({ ok: false, data: null, error: { code: 'BAD_REQUEST', message: '`text` is required (&lt;=2000 chars)' } });
+    }
+
+    const now = new Date();
+    const chatId = 'global';
+
+    await upsertChat({ chatId, type: 'global', now });
+    const saved = await insertMessageAndBroadcast({ req, chatId, username, text, now });
+
+    res.status(201).json({ ok: true, data: { message: saved }, error: null });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @openapi
+ * /api/chat/movie/{movieId}/messages:
+ *   post:
+ *     tags: [Chat]
+ *     summary: Send a message in a movie chat (creates the chat if missing)
+ *     parameters:
+ *       - in: path
+ *         name: movieId
+ *         required: true
+ *         schema: { type: string }
+ *         description: Movie ID (from Spring backend; treated as string)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, text]
+ *             properties:
+ *               username: { type: string, maxLength: 50 }
+ *               text: { type: string, maxLength: 2000 }
+ *     responses:
+ *       201:
+ *         description: Message created
+ */
+router.post('/chat/movie/:movieId/messages', async (req, res, next) => {
+  try {
+    const movieIdStr = String(req.params.movieId);
+    const chatId = makeMovieChatId(movieIdStr);
+
+    const username = normalizeUsername(req.body?.username);
+    const text = normalizeText(req.body?.text);
+    if (!username) {
+      return res.status(400).json({ ok: false, data: null, error: { code: 'BAD_REQUEST', message: '`username` is required (&lt;=50 chars)' } });
+    }
+    if (!text) {
+      return res.status(400).json({ ok: false, data: null, error: { code: 'BAD_REQUEST', message: '`text` is required (&lt;=2000 chars)' } });
+    }
+
+    const now = new Date();
+    await upsertChat({ chatId, type: 'movie', movieId: movieIdStr, now });
+    const saved = await insertMessageAndBroadcast({ req, chatId, username, text, now });
+
+    res.status(201).json({ ok: true, data: { message: saved }, error: null });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @openapi
+ * /api/chat/global/messages:
+ *   get:
+ *     tags: [Chat]
+ *     summary: Read global chat messages (cursor pagination on _id)
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+  *       - in: query
+  *         name: cursor
+  *         schema: { type: string }
+ *         description: Message _id to continue from (excludes ids >= cursor)
+ *     responses:
+ *       200:
+ *         description: Message list (newest first)
+ */
+router.get('/chat/global/messages', async (req, res, next) => {
+  try {
+    const limit = Math.max(1, Math.min(100, Number(req.query.limit ?? 20)));
+    const cursorId = req.query.cursor;
+
+    const messages = await getCollection('messages');
+    const filter = { chatId: 'global' };
+    if (cursorId &amp;&amp; ObjectId.isValid(cursorId)) {
+      filter._id = { $lt: new ObjectId(cursorId) };
+    }
+
+    const docs = await messages
+      .find(filter)
+      .sort({ _id: -1 })
+      .limit(limit + 1)
+      .toArray();
+
+    const hasMore = docs.length > limit;
+    const items = hasMore ? docs.slice(0, limit) : docs;
+    const nextCursor = hasMore ? String(items[items.length - 1]._id) : null;
+
+    res.json({ ok: true, data: { items, nextCursor, hasMore }, error: null });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @openapi
+ * /api/chat/movie/{movieId}/messages:
+ *   get:
+ *     tags: [Chat]
+ *     summary: Read movie chat messages (cursor pagination on _id)
+ *     parameters:
+ *       - in: path
+ *         name: movieId
+ *         required: true
+ *         schema: { type: string }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+ *       - in: query
+ *         name: cursor
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Message list (newest first)
+ */
+router.get('/chat/movie/:movieId/messages', async (req, res, next) => {
+  try {
+    const movieIdStr = String(req.params.movieId);
+    const chatId = makeMovieChatId(movieIdStr);
+    const limit = Math.max(1, Math.min(100, Number(req.query.limit ?? 20)));
+    const cursorId = req.query.cursor;
+
+    const messages = await getCollection('messages');
+    const filter = { chatId };
+    if (cursorId &amp;&amp; ObjectId.isValid(cursorId)) {
+      filter._id = { $lt: new ObjectId(cursorId) };
+    }
+
+    const docs = await messages
+      .find(filter)
+      .sort({ _id: -1 })
+      .limit(limit + 1)
+      .toArray();
+
+    const hasMore = docs.length > limit;
+    const items = hasMore ? docs.slice(0, limit) : docs;
+    const nextCursor = hasMore ? String(items[items.length - 1]._id) : null;
+
+    res.json({ ok: true, data: { items, nextCursor, hasMore }, error: null });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @openapi
+ * /api/chat/movie/{movieId}:
+ *   get:
+ *     tags: [Chat]
+ *     summary: Movie chat metadata (messagesCount, lastMessageAt)
+ *     parameters:
+ *       - in: path
+ *         name: movieId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Chat metadata
+ */
+router.get('/chat/movie/:movieId', async (req, res, next) => {
+  try {
+    const movieIdStr = String(req.params.movieId);
+    const chatId = makeMovieChatId(movieIdStr);
+    const chats = await getCollection('chats');
+    const chat = await chats.findOne({ chatId });
+    res.json({ ok: true, data: chat ?? null, error: null });
+  } catch (err) {
+    next(err);
+  }
+});
+
+export default router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> routes/movies.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">MainServerExpress Docs</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>routes/movies.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Movies routes and helpers.
+ * @module movies
+ * @category Routes
+ */
+
+import express from "express";
+import { trySpringGet } from "../utils/helpers.js";
+import { buildImageUrl } from "../utils/images.js";
+
+/**
+ * Normalizes poster data adding a fully qualified link.
+ * @param {object} p Poster object from upstream.
+ * @param {string} fallbackPath Fallback path when upstream provides only a string.
+ * @returns {object|null} Normalized poster or null.
+ */
+function normalizePoster(p, fallbackPath) {
+  if (!p &amp;&amp; !fallbackPath) return null;
+  if (p?.link) return p;
+  if (p?.path) return { ...p, link: buildImageUrl(p.path) };
+  if (fallbackPath)
+    return { id: p?.id ?? null, link: buildImageUrl(fallbackPath) };
+  return null;
+}
+
+/**
+ * Builds a preview-ready movie payload.
+ * @param {object} item Raw item from upstream.
+ * @returns {object} Normalized preview object.
+ */
+function normalizePreviewItem(item) {
+  const poster = normalizePoster(item.poster, item.posterPath);
+  return {
+    id: item.id,
+    name: item.name,
+    date: item.date ?? null,
+    description: item.description ?? "",
+    rating: item.rating ?? null,
+    poster,
+    ...item,
+    poster,
+  };
+}
+
+const router = express.Router();
+
+/**
+ * @openapi
+ * tags:
+ *   - name: Movies
+ *     description: Movie operations
+ */
+
+/**
+ * @openapi
+ * /api/movies/{id}:
+ *   get:
+ *     summary: Return movie details
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Movie ID
+ *     responses:
+ *       200:
+ *         description: Movie data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1000048
+ *                 name:
+ *                   type: string
+ *                   example: "Inception"
+ *                 cast:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       actorId:
+ *                         type: integer
+ *                         example: 84742
+ *                       name:
+ *                         type: string
+ *                         example: "Leonardo DiCaprio"
+ *                       imageUrl:
+ *                         type: string
+ *                         example: "http://localhost:8080/actors/58.jpg"
+ *       404:
+ *         description: Movie not found
+ */
+router.get("/movies/:id", async (req, res, next) => {
+  try {
+    const data = await trySpringGet(["/api/movies/:id", "/movies/:id"], req);
+    if (!data) {
+      return res.status(404).json({
+        ok: false,
+        data: null,
+        error: { code: "MOVIE_NOT_FOUND", message: "Movie not found" },
+      });
+    }
+
+    const enriched = {
+      ...data,
+      cast: Array.isArray(data?.cast)
+        ? data.cast.map((c) => ({
+            ...c,
+            imageUrl: c.imagePath ? buildImageUrl(c.imagePath) : null,
+          }))
+        : [],
+    };
+
+    res.json({ ok: true, data: enriched, error: null });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * @openapi
+ * /api/movies/random:
+ *   get:
+ *     summary: Return a random movie (shuffle)
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: Fields to return (e.g. "id,name,date,description,rating,poster")
+ *     responses:
+ *       200:
+ *         description: Random movie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id: { type: integer, example: 1000048 }
+ *                     name: { type: string, example: "Inception" }
+ *                     date: { type: integer, example: 2010 }
+ *                     description: { type: string, example: "A mind-bending thriller..." }
+ *                     rating: { type: number, example: 4.5 }
+ *                     poster:
+ *                       type: object
+ *                       properties:
+ *                         id: { type: integer, example: 1000048 }
+ *                         link: { type: string, example: "http://localhost:8080/posters/1000048.jpg" }
+ *                 error:
+ *                   nullable: true
+ *       503:
+ *         description: Upstream unavailable
+ */
+router.get("/movies/random", async (req, res, next) => {
+  try {
+    const data = await trySpringGet(
+      ["/api/movies/random", "/movies/random"],
+      req
+    );
+
+    if (!data) {
+      return res.status(503).json({
+        ok: false,
+        data: null,
+        error: {
+          code: "UPSTREAM_UNAVAILABLE",
+          message: "Random movie upstream unavailable",
+        },
+      });
+    }
+
+    const normalizedPoster = (() => {
+      const p = data.poster || {};
+      if (p?.link) return p;
+      if (p?.path) return { ...p, link: buildImageUrl(p.path) };
+      if (data.posterPath)
+        return { id: p?.id ?? null, link: buildImageUrl(data.posterPath) };
+      return null;
+    })();
+
+    const enriched = {
+      id: data.id,
+      name: data.name,
+      date: data.date ?? null,
+      description: data.description ?? "",
+      rating: data.rating ?? null,
+      poster: normalizedPoster,
+      ...data,
+      poster: normalizedPoster,
+    };
+
+    res.set("Cache-Control", "no-store");
+    return res.json({ ok: true, data: enriched, error: null });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+/**
+ * @openapi
+ * /api/movies/top-rated:
+ *   get:
+ *     summary: Return top-rated movies (preview)
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Maximum number of results
+ *     responses:
+ *       200:
+ *         description: List of top-rated movies (preview)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok: { type: boolean, example: true }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: integer, example: 1000048 }
+ *                       name: { type: string, example: "Inception" }
+ *                       date: { type: integer, example: 2010 }
+ *                       description: { type: string, example: "A mind-bending thriller..." }
+ *                       rating: { type: number, example: 4.8 }
+ *                       poster:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: integer, example: 1000048 }
+ *                           link: { type: string, example: "http://localhost:8080/posters/1000048.jpg" }
+ *                 error: { nullable: true }
+ *       503:
+ *         description: Upstream unavailable
+ */
+router.get("/movies/top-rated", async (req, res, next) => {
+  try {
+    const upstream = await trySpringGet(
+      ["/api/movies/top-rated", "/movies/top-rated"],
+      req
+    );
+
+    if (!upstream || !Array.isArray(upstream)) {
+      return res.status(503).json({
+        ok: false,
+        data: null,
+        error: {
+          code: "UPSTREAM_UNAVAILABLE",
+          message: "Top rated upstream unavailable",
+        },
+      });
+    }
+
+    const data = upstream.map(normalizePreviewItem);
+
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=60");
+    return res.json({ ok: true, data, error: null });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+/**
+ * @openapi
+ * /api/movies/latest:
+ *   get:
+ *     summary: Return latest movies (preview)
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Maximum number of results
+ *     responses:
+ *       200:
+ *         description: List of latest movies (preview)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok: { type: boolean, example: true }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: integer }
+ *                       name: { type: string }
+ *                       date: { type: integer }
+ *                       description: { type: string }
+ *                       rating: { type: number }
+ *                       poster:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: integer }
+ *                           link: { type: string }
+ *                 error: { nullable: true }
+ *       503:
+ *         description: Upstream unavailable
+ */
+router.get("/movies/latest", async (req, res, next) => {
+  try {
+    const upstream = await trySpringGet(
+      ["/api/movies/latest", "/movies/latest"],
+      req
+    );
+
+    if (!upstream || !Array.isArray(upstream)) {
+      return res.status(503).json({
+        ok: false,
+        data: null,
+        error: {
+          code: "UPSTREAM_UNAVAILABLE",
+          message: "Latest upstream unavailable",
+        },
+      });
+    }
+
+    const data = upstream.map(normalizePreviewItem);
+
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=60");
+    return res.json({ ok: true, data, error: null });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+export default router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

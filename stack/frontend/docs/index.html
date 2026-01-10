@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Home</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">Frontend Docs</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-axiosClient.html">axiosClient</a></li><li><a href="module-queryClient.html">queryClient</a></li><li><a href="module-useActorInfoQuery.html">useActorInfoQuery</a></li><li><a href="module-useApiQuery.html">useApiQuery</a></li><li><a href="module-useChatRoom.html">useChatRoom</a></li><li><a href="module-useMovieQuery.html">useMovieQuery</a></li><li><a href="module-useOscarAwardQuery.html">useOscarAwardQuery</a></li><li><a href="module-useRandomMovie.html">useRandomMovie</a></li><li><a href="module-useReviewQuery.html">useReviewQuery</a></li><li><a href="module-useSearchQuery.html">useSearchQuery</a></li><li><a href="module-useTopLatestMovies.html">useTopLatestMovies</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li><li><a href="ChatService.html">ChatService</a></li><li><a href="MovieService.html">MovieService</a></li><li><a href="OscarAwardService.html">OscarAwardService</a></li><li><a href="ReviewService.html">ReviewService</a></li><li><a href="SearchService.html">SearchService</a></li></ul></div><div class="category"><h2>Models</h2><h3>Modules</h3><ul><li><a href="module-ActorInfo.html">ActorInfo</a></li><li><a href="module-ChatMessage.html">ChatMessage</a></li><li><a href="module-ChatMeta.html">ChatMeta</a></li><li><a href="module-Movie.html">Movie</a></li><li><a href="module-OscarAward.html">OscarAward</a></li><li><a href="module-Review.html">Review</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-countryCodes.html">countryCodes</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p></p>
+                    <h1>Home</h1>
+                </header>
+                
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>MoviePoint Frontend</h1>
+<p>A Vite + React single-page app for exploring movies and actors, chatting with other cinephiles, and browsing curated carousels. The UI is built around a glassmorphism theme and powered by a backend API (see environment variables below).</p>
+<h2>Features</h2>
+<ul>
+<li>Global search in the navbar with debounced queries for movies and actors.</li>
+<li>Home page with a shuffleable featured movie plus latest and top-rated carousels.</li>
+<li>Film detail page with synopsis, cast/crew carousels, user reviews, Oscar awards, and a live room chat per movie.</li>
+<li>Actor page with biography, stats, filmography cards, and award highlights.</li>
+<li>Global chat room using Socket.IO to talk with other visitors.</li>
+<li>Reusable components (alerts, loaders, cards, chips) and JSDoc-generated API documentation.</li>
+</ul>
+<h2>Tech Stack</h2>
+<ul>
+<li>React 19 + Vite 7, React Router, React Icons.</li>
+<li>Axios for REST calls, Socket.IO client for realtime chat.</li>
+<li>ESLint for linting; JSDoc (better-docs theme) for API docs.</li>
+</ul>
+<h2>Project Structure</h2>
+<ul>
+<li><code>src/main</code>: App entry point, global providers, CSS imports.</li>
+<li><code>src/navigation</code>: Router setup, navbar with search, footer.</li>
+<li><code>src/pages</code>: Screen components (<code>home</code>, <code>film</code>, <code>actor</code>, <code>globalchat</code>).</li>
+<li><code>src/api</code>: Axios client, React query-like hooks, and service wrappers.</li>
+<li><code>src/components</code>: Shared UI (alerts, chat, carousels, loaders, back-to-top).</li>
+<li><code>public</code> / <code>src/assets</code>: Static assets, icons, and images.</li>
+<li><code>docs</code>: Generated JSDoc site for services, hooks, and models.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Node.js 18+ and npm.</li>
+<li>Backend API reachable at <code>VITE_API_BASE_URL</code> (defaults to <code>http://localhost:4000/api</code>).</li>
+<li>Socket.IO server for chat (defaults to <code>http://localhost:4000</code> in <code>Chat</code> props).</li>
+</ul>
+<h2>Setup</h2>
+<ol>
+<li>Install dependencies:</li>
+</ol>
+<pre class="prettyprint source"><code>npm install
+</code></pre>
+<ol start="2">
+<li>Create a <code>.env</code> (optional) to point to your backend:</li>
+</ol>
+<pre class="prettyprint source"><code>VITE_API_BASE_URL=http://localhost:4000/api
+</code></pre>
+<ol start="3">
+<li>Start the dev server:</li>
+</ol>
+<pre class="prettyprint source"><code>npm run dev
+</code></pre>
+<ol start="4">
+<li>Build for production:</li>
+</ol>
+<pre class="prettyprint source"><code>npm run build
+</code></pre>
+<ol start="5">
+<li>Preview the production build locally:</li>
+</ol>
+<pre class="prettyprint source"><code>npm run preview
+</code></pre>
+<h2>Quality &amp; Docs</h2>
+<ul>
+<li>Lint the project: <code>npm run lint</code></li>
+<li>Regenerate API docs into <code>docs/</code>: <code>npm run docs</code></li>
+</ul>
+<h2>Notes</h2>
+<ul>
+<li>The app relies on the backend for search, movie/actor data, reviews, Oscars, and chat history; ensure the API is running before testing the UI.</li>
+<li>Chat uses Socket.IO with room-based channels; the global room is exposed at <code>/global-chat</code>, while each movie chat is scoped by movie ID.</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
