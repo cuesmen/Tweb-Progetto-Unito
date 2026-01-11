@@ -81,3 +81,7 @@ build/
 # Crash log JVM
 hs_err_pid*
 replay_pid*
+
+#csv
+.csv
+*.csv
