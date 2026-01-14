@@ -3,6 +3,9 @@ package com.filmssql.web.dto;
 import lombok.*;
 import java.time.LocalDate;
 
+/**
+ * Detailed actor information payload.
+ */
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class ActorInfoDTO {
     private Long actorId;

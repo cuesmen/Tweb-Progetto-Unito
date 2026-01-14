@@ -52,6 +52,9 @@ export function useApiQuery({
 
   const snapshot = useSyncExternalStore(subscribe, getSnapshot);
 
+  // If the last fetch errored and retry is 0, avoid further fetches until refetch is called manually.
+  const haltOnError = snapshot.status === "error" && retry === 0;
+
   useEffect(() => {
     if (!enabled) return;
 
@@ -66,9 +69,9 @@ export function useApiQuery({
     const noData = typeof snapshot.data === "undefined";
     const shouldFetch =
       snapshot.status === "idle" ||
-      snapshot.status === "error" ||
-      (noData && snapshot.status !== "loading") ||
-      isStale;
+      (snapshot.status === "error" && retry > 0) ||
+      (!haltOnError && noData && snapshot.status !== "loading" && snapshot.status !== "error") ||
+      (!haltOnError && isStale && snapshot.status !== "error");
 
     if (!shouldFetch) return;
 
@@ -124,7 +127,7 @@ export function useApiQuery({
 
   const selectedData = selectCacheRef.current.selected;
 
-  const isLoading = snapshot.status === "loading" && !snapshot.data;
+  const isLoading = snapshot.status === "loading" && !snapshot.data && snapshot.error === null;
   const isFetching = snapshot.isFetching;
   const isError = snapshot.status === "error";
 

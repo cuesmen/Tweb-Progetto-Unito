@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * REST endpoints for movie reviews.
+ */
 @RestController
 @RequestMapping("/api/reviewmovie")
 public class ReviewMovieController
@@ -19,6 +22,9 @@ public class ReviewMovieController
     private final ReviewMovieService reviewMovieService;
     public ReviewMovieController(ReviewMovieService reviewMovieService){ this.reviewMovieService = reviewMovieService; }
 
+    /**
+     * Returns reviews for the given movie.
+     */
     @GetMapping("/{movie_id}")
     public ResponseEntity<List<ReviewMovieDTO>> get(@PathVariable("movie_id") Long movieId){
         List<ReviewMovieDTO> body = reviewMovieService.getReviews(movieId).stream()

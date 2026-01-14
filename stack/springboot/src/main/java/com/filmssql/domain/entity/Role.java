@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Role reference (e.g., Director, Writer) used by crew associations.
+ */
 @Entity
 @Table(name = "role")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Poster asset linked one-to-one with a movie.
+ */
 @Entity
 @Table(name = "posters")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

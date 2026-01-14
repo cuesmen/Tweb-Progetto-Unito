@@ -2,6 +2,7 @@ package com.filmssql.web.dto;
 
 import java.time.LocalDate;
 
+/** Critic review payload for a movie. */
 public record ReviewMovieDTO(
         Long id,
         Long movieId,

@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Join entity mapping crew members (person) to a movie with a specific role.
+ */
 @Entity
 @Table(
         name = "movie_role_person",

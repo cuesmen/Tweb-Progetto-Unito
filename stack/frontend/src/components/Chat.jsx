@@ -3,6 +3,18 @@ import { IoPaperPlaneOutline } from "react-icons/io5";
 import { io } from "socket.io-client";
 import { useChatRoom } from "../api/chat/useChatRoom";
 import ChatMessage from "./ChatMessage";
+import Alert from "./Alert";
+
+const mapErrorMessage = (err) => {
+  const raw = err?.message || err?.error || String(err || "");
+  if (/xhr poll error/i.test(raw)) {
+    return "Cannot reach chat server (polling). Ensure it is running and reachable.";
+  }
+  if (/connect/i.test(raw) && /refused/i.test(raw)) {
+    return "Chat connection refused: check the server is running.";
+  }
+  return raw || "Unknown chat error.";
+};
 
 const defaultIntro = (title) =>
   title ? `Benvenuto nella chat dedicata a “${title}”. Condividi quello che pensi!` : null;
@@ -25,23 +37,37 @@ export default function Chat({
   const socketRef = useRef(null);
   const sessionIdRef = useRef(`session-${Math.random().toString(36).slice(2)}`);
   const messageListRef = useRef(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // socket.io connect/disconnect 
   useEffect(() => {
     if (!room) return undefined;
     const socket = io(socketUrl, { withCredentials: true });
+    const onConnectError = (err) => setErrorMsg(mapErrorMessage(err) || "Socket connection failed");
+    const onError = (err) => setErrorMsg(mapErrorMessage(err) || "Socket error");
+    const onConnect = () => setErrorMsg(null);
+    socket.on("connect_error", onConnectError);
+    socket.on("error", onError);
+    socket.on("connect", onConnect);
     socket.emit("chat:join", room);
     socketRef.current = socket;
     return () => {
+      socket.off("connect_error", onConnectError);
+      socket.off("error", onError);
+      socket.off("connect", onConnect);
       socket.emit("chat:leave", room);
       socket.disconnect();
     };
   }, [room, socketUrl]);
 
-  // hook chat (axios + socket)
-  const { messages, send, hasMore, loadMore, loading, sending } = useChatRoom(room, {
+  const { messages, send, hasMore, loadMore, loading, sending, error: chatError } = useChatRoom(room, {
     socket: socketRef.current,
   });
+
+  useEffect(() => {
+    if (!chatError) return;
+    setErrorMsg(mapErrorMessage(chatError));
+  }, [chatError]);
 
   const [username, setUsername] = useState("");
   const [messageBody, setMessageBody] = useState("");
@@ -82,6 +108,7 @@ export default function Chat({
       localStorage.setItem(`${storageKeyPrefix}:${room}`, String(ts));
     } catch (err) {
       console.error("Send failed:", err);
+      setErrorMsg(mapErrorMessage(err) || "Send failed");
     }
   };
 
@@ -112,6 +139,15 @@ export default function Chat({
 
   return (
     <section className={rootClass} aria-labelledby="chat-title">
+      {errorMsg && (
+        <Alert
+          type="error"
+          title="Chat"
+          description={errorMsg}
+          dismissible
+          className="film-chat__alert"
+        />
+      )}
       <header className="film-chat__header">
         <div>
           <h2 id="chat-title" className="film-chat__title">{title}</h2>

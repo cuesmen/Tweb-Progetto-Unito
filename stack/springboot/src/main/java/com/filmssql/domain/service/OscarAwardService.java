@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service for querying Oscar awards by actor or movie.
+ */
 @Service
 public class OscarAwardService {
 
@@ -17,6 +20,10 @@ public class OscarAwardService {
         this.oscarAwardRepository = oscarAwardRepository;
     }
 
+    /**
+     * Awards won or nominated by a specific actor.
+     * @throws com.filmssql.web.exception.NotFoundException when none exist.
+     */
     @Transactional(readOnly = true)
     public List<OscarAward> getByActor(Long actorId) {
         List<OscarAward> awards = oscarAwardRepository.findAllByActorId(actorId);
@@ -26,6 +33,10 @@ public class OscarAwardService {
         return awards;
     }
 
+    /**
+     * Awards tied to a given movie.
+     * @throws com.filmssql.web.exception.NotFoundException when none exist.
+     */
     @Transactional(readOnly = true)
     public List<OscarAward> getByMovie(Long movieId) {
         List<OscarAward> awards = oscarAwardRepository.findAllByMovieId(movieId);

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.filmssql"},{"l":"com.filmssql.config"},{"l":"com.filmssql.domain.entity"},{"l":"com.filmssql.domain.repository"},{"l":"com.filmssql.domain.service"},{"l":"com.filmssql.util"},{"l":"com.filmssql.web.controller"},{"l":"com.filmssql.web.dto"},{"l":"com.filmssql.web.exception"}];updateSearchResults();

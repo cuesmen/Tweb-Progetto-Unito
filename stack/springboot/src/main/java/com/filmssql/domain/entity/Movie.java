@@ -6,6 +6,9 @@ import lombok.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Movie aggregate with poster, cast, crew, genres, studios, countries, languages and releases.
+ */
 @Entity
 @Table(name = "movies")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

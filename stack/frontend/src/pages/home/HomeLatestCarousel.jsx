@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useLatestMovies } from "../../api/movie/useTopLatestMovies";
 import Alert from "../../components/Alert";
 import HomeCarouselCard from "./HomeCarouselCard";
@@ -6,6 +6,7 @@ import HomeCarouselSkeleton from "./HomeCarouselSkeleton";
 
 export default function HomeLatestCarousel({ limit = 12, anchorId = "latest" }) {
   const { data: movies, isLoading, isError, error } = useLatestMovies(limit, true);
+  const [showError, setShowError] = useState(true);
   const trackRef = useRef(null);
   const safeMovies = Array.isArray(movies) ? movies : [];
 
@@ -30,11 +31,14 @@ export default function HomeLatestCarousel({ limit = 12, anchorId = "latest" }) 
         </div>
       </header>
 
-      {isError ? (
+      {isError && showError ? (
         <Alert
+          className="top-margin"
           type="warning"
           title="List not available"
           description={error?.message || "Unable to load Latest Movies."}
+          dismissible={true}
+          onClose={() => setShowError(false)}
         />
       ) : isLoading ? (
         <HomeCarouselSkeleton />

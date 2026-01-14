@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useActorInfoQuery } from "../../api/actor/useActorInfoQuery";
 import DefaultPage from "../../components/DefaultPage";
+import Alert from "../../components/Alert";
 
 import {
   FiStar,
@@ -120,7 +121,20 @@ export default function ActorPage() {
     return <DefaultPage loading loadingMessage="Loading actor…" />;
   }
 
-  if (isError || !info) {
+  if (isError) {
+    return (
+      <DefaultPage>
+        <Alert
+          type="error"
+          title="Actor load error"
+          description={errorMsg}
+          dismissible
+        />
+      </DefaultPage>
+    );
+  }
+
+  if (!info) {
     return (
       <DefaultPage>
         <div className="actor-container glass-card">
@@ -158,11 +172,12 @@ export default function ActorPage() {
               </h1>
 
               <div className="actor-meta">
-                <StatChip
+                {
+                /*<StatChip
                   label="Popularity"
                   value={info?.popularity != null ? Math.round(info.popularity) : null}
                   Icon={FiStar}
-                />
+                />*/}
                 <StatChip label="Gender" value={info?.genderText ?? null} Icon={FiUser} />
                 <StatChip
                   label="Born"

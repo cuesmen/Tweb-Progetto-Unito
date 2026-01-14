@@ -14,6 +14,7 @@ export function useSearchQuery(query) {
     queryFn: ({ signal }) => SearchService.search(query, { signal }),
     select: (res) => res?.data ?? res ?? [],
     enabled: !!query && query.length >= 2,
+    retry: 0,
     staleTime: 60 * 1000,
     keepPreviousData: true,
   });

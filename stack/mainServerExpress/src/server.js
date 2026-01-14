@@ -10,7 +10,7 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { ENV } from './config/env.js';
 import { setupSwagger } from './config/swagger.js';
-import { closeMongo } from './mongodb/mongo.js';
+import { connectMongoose, closeMongoose } from './mongodb/mongoose.js';
 import { useChatSocket } from './routes/mongo.js';
 
 import systemRoutes from './routes/system.js';
@@ -82,12 +82,16 @@ io.on('connection', (socket) => {
 });
 
 server.listen(ENV.PORT, () => {
-  console.log(`✅ Gateway running on http://localhost:${ENV.PORT}`);
+  connectMongoose().then(() => {
+    console.log(`✅ Gateway running on http://localhost:${ENV.PORT}`);
+  }).catch((err) => {
+    console.error('Mongo connection failed:', err);
+  });
 });
 
 const shutdown = async (signal) => {
   console.log(`\n${signal} received, closing...`);
-  await closeMongo();
+  await closeMongoose();
   server.close(() => process.exit(0));
 };
 process.on('SIGINT', () => shutdown('SIGINT'));

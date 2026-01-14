@@ -9,16 +9,19 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for {@link Movie} with fetch helpers and preview projections.
+ */
 public interface MovieRepository extends JpaRepository<Movie, Long>
 {
 
     @Query("""
-                select distinct m from Movie m
-                left join fetch m.poster
-                left join fetch m.themes
-                left join fetch m.releases r
-                left join fetch r.country
-                where m.id = :id
+            select distinct m from Movie m
+            left join fetch m.poster
+            left join fetch m.themes
+            left join fetch m.releases r
+            left join fetch r.country
+            where m.id = :id
             """)
     Optional<Movie> findBaseById(@Param("id") Long id);
 

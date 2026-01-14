@@ -1,12 +1,12 @@
 /**
- * Chat routes backed by MongoDB.
+ * Chat routes backed by MongoDB via Mongoose.
  * @module mongo
  * @category Routes
  */
 
 import { Router } from 'express';
-import { getCollection, mongoHealth } from '../mongodb/mongo.js';
-import { ObjectId, Int32 } from 'mongodb';
+import mongoose from 'mongoose';
+import { ChatModel, MessageModel, connectMongoose, mongooseHealth } from '../mongodb/mongoose.js';
 
 const router = Router();
 
@@ -29,10 +29,9 @@ const router = Router();
  */
 router.get('/chat/health', async (_req, res, next) => {
   try {
-    const h = await mongoHealth();
-    const db = await getCollection('messages').then(c => c.db);
-    const cols = await db.listCollections({}, { nameOnly: true }).toArray();
-    res.json({ ok: true, data: { mongo: h, collections: cols.map(c => c.name) }, error: null });
+    const h = await mongooseHealth();
+    const cols = await mongoose.connection.db?.listCollections({}, { nameOnly: true }).toArray();
+    res.json({ ok: true, data: { mongo: h, collections: cols?.map((c) => c.name) || [] }, error: null });
   } catch (err) {
     next(err);
   }
@@ -62,50 +61,39 @@ function makeChatId(room) {
   return null;
 }
 
-/** Upsert chat document ensuring counters are updated without $setOnInsert/$inc collisions. */
+/** Upsert chat document ensuring counters are updated atomically. */
 async function upsertChat({ chatId, type, movieId = null, now }) {
-  const chats = await getCollection('chats');
+  await connectMongoose();
 
-  // try to update if chat already exists
-  const upd = await chats.updateOne(
+  // Try update first
+  const updated = await ChatModel.findOneAndUpdate(
     { chatId },
-    {
-      $set: { lastMessageAt: now },
-      $inc: { messagesCount: new Int32(1) },
-    }
+    { $set: { lastMessageAt: now, type, movieId }, $inc: { messagesCount: 1 } },
+    { new: true }
   );
 
-  if (upd.matchedCount === 1) {
-    // fetch and return updated document
-    return await chats.findOne({ chatId });
-  }
+  if (updated) return updated;
 
-  // if it does not exist, create with messagesCount = 1
-  const doc = {
+  // Create if missing
+  return await ChatModel.create({
     chatId,
-    type,              // 'global' | 'movie'
-    movieId,           
+    type,
+    movieId,
     createdAt: now,
     lastMessageAt: now,
-    messagesCount: new Int32(1),
-  };
-
-  await chats.insertOne(doc);
-  return doc;
+    messagesCount: 1,
+  });
 }
-
 
 /** Insert a message and broadcast it on socket.io (room = chatId). */
 async function insertMessageAndBroadcast({ req, chatId, username, text, now }) {
-  const messages = await getCollection('messages');
-  const doc = {
+  await connectMongoose();
+  const saved = await MessageModel.create({
     chatId,
     author: { username },
     text,
-    createdAt: now
-  };
-  const result = await messages.insertOne(doc);
-  const saved = { _id: result.insertedId, ...doc };
+    createdAt: now,
+  });
 
   const io = req.app?.get?.('io') || req.io;
   if (io) io.to(chatId).emit('chat:message', saved);
@@ -243,18 +231,18 @@ export function useChatSocket(io) {
         const chatId = makeChatId(room);
         if (!chatId) return ack?.({ error: 'BAD_ROOM' });
         const lim = Math.max(1, Math.min(Number(limit) || 20, 100));
-        const messages = await getCollection('messages');
         const filter = { chatId };
-        if (cursor) filter._id = { $lt: new ObjectId(cursor) };
-        const docs = await messages
-          .find(filter)
+        if (cursor && mongoose.Types.ObjectId.isValid(cursor)) {
+          filter._id = { $lt: new mongoose.Types.ObjectId(cursor) };
+        }
+        const docs = await MessageModel.find(filter)
           .sort({ _id: -1 })
-          .limit(lim)
-          .toArray();
+          .limit(lim + 1)
+          .lean();
         const items = docs;
-        const nextCursor = docs.length === lim ? docs[docs.length - 1]._id : null;
+        const nextCursor = docs.length === lim + 1 ? docs[docs.length - 1]._id : null;
         const hasMore = Boolean(nextCursor);
-        ack?.({ items, nextCursor, hasMore });
+        ack?.({ items: hasMore ? items.slice(0, lim) : items, nextCursor, hasMore });
       } catch (err) {
         ack?.({ error: err.message || 'LIST_ERROR' });
       }
@@ -285,17 +273,15 @@ router.get('/chat/global/messages', async (req, res, next) => {
     const limit = Math.max(1, Math.min(100, Number(req.query.limit ?? 20)));
     const cursorId = req.query.cursor;
 
-    const messages = await getCollection('messages');
     const filter = { chatId: 'global' };
-    if (cursorId && ObjectId.isValid(cursorId)) {
-      filter._id = { $lt: new ObjectId(cursorId) };
+    if (cursorId && mongoose.Types.ObjectId.isValid(cursorId)) {
+      filter._id = { $lt: new mongoose.Types.ObjectId(cursorId) };
     }
 
-    const docs = await messages
-      .find(filter)
+    const docs = await MessageModel.find(filter)
       .sort({ _id: -1 })
       .limit(limit + 1)
-      .toArray();
+      .lean();
 
     const hasMore = docs.length > limit;
     const items = hasMore ? docs.slice(0, limit) : docs;
@@ -335,17 +321,15 @@ router.get('/chat/movie/:movieId/messages', async (req, res, next) => {
     const limit = Math.max(1, Math.min(100, Number(req.query.limit ?? 20)));
     const cursorId = req.query.cursor;
 
-    const messages = await getCollection('messages');
     const filter = { chatId };
-    if (cursorId && ObjectId.isValid(cursorId)) {
-      filter._id = { $lt: new ObjectId(cursorId) };
+    if (cursorId && mongoose.Types.ObjectId.isValid(cursorId)) {
+      filter._id = { $lt: new mongoose.Types.ObjectId(cursorId) };
     }
 
-    const docs = await messages
-      .find(filter)
+    const docs = await MessageModel.find(filter)
       .sort({ _id: -1 })
       .limit(limit + 1)
-      .toArray();
+      .lean();
 
     const hasMore = docs.length > limit;
     const items = hasMore ? docs.slice(0, limit) : docs;
@@ -376,8 +360,7 @@ router.get('/chat/movie/:movieId', async (req, res, next) => {
   try {
     const movieIdStr = String(req.params.movieId);
     const chatId = makeMovieChatId(movieIdStr);
-    const chats = await getCollection('chats');
-    const chat = await chats.findOne({ chatId });
+    const chat = await ChatModel.findOne({ chatId }).lean();
     res.json({ ok: true, data: chat ?? null, error: null });
   } catch (err) {
     next(err);

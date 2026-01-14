@@ -459,6 +459,7 @@
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
   border: 1px solid rgba(255,255,255,.26);
+  cursor: pointer;
 }
 .alert__close:hover{ transform: translateY(-1px); }
 .alert__close:focus-visible{ outline: 2px solid rgba(255,255,255,.6); outline-offset: 2px; }
@@ -530,4 +531,53 @@ body:has(.alert--error){
 .alert--error{
   z-index: 10000;
   pointer-events: auto;
+}
+body.actor-page:has(.alert--error)::before,
+body:has(.actor-container .alert--error)::before {
+  display: none;
+}
+body.actor-page:has(.alert--error),
+body:has(.actor-container .alert--error) {
+  pointer-events: auto;
+}
+
+/* Inline chat alerts: avoid global blur overlay and position within the chat block */
+.film-chat__alert {
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  margin-bottom: 12px;
+  z-index: 1;
+}
+body:has(.film-chat__alert.alert--error)::before {
+  display: none;
+}
+body:has(.film-chat__alert.alert--error) {
+  pointer-events: auto;
+}
+
+/* Navbar inline alerts (no global blur) */
+.nav-alert {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 640px;
+  margin: 0;
+  z-index: 50000;
+}
+body:has(.nav-alert.alert--error)::before {
+  display: none;
+}
+body:has(.nav-alert.alert--error) {
+  pointer-events: auto;
+}
+
+
+.top-margin{
+  margin-top: 40px;
 }

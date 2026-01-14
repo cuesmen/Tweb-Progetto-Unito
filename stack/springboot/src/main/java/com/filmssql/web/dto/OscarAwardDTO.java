@@ -1,5 +1,6 @@
 package com.filmssql.web.dto;
 
+/** Oscar award payload. */
 public record OscarAwardDTO(
         Long id,
         String yearFilm,

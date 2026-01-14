@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+/**
+ * Critic review associated with a movie.
+ */
 @Entity
 @Table(name = "reviews_movies")
 @Getter

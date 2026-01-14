@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Service handling movie retrieval, enrichment, previews and associations.
+ */
 @Service
 public class MovieService {
 
@@ -37,6 +40,11 @@ public class MovieService {
         this.languageRepository = languageRepository;
     }
 
+    /**
+     * Loads a movie with related aggregates (cast, crew, genres, studios, countries, languages).
+     * @param id movie id.
+     * @return DTO with relations.
+     */
     @Transactional(readOnly = true)
     public MovieDTO getDto(Long id) {
         Movie m = movieRepository.findBaseById(id)
@@ -58,14 +66,23 @@ public class MovieService {
                 .orElseThrow(() -> new NotFoundException("Movie %d not found".formatted(id)));
     }
 
+    /**
+     * Persist or update a movie.
+     */
     public Movie save(Movie movie) {
         return movieRepository.save(movie);
     }
 
+    /**
+     * Delete a movie by id.
+     */
     public void delete(Long id) {
         movieRepository.delete(getEntity(id));
     }
 
+    /**
+     * Replace genres associated to a movie.
+     */
     @Transactional
     public MovieDTO attachGenres(Long movieId, Set<Long> genreIds) {
         Movie m = getEntity(movieId);
@@ -75,6 +92,9 @@ public class MovieService {
         return Mappers.toDTO(m);
     }
 
+    /**
+     * Replace studios associated to a movie.
+     */
     @Transactional
     public MovieDTO attachStudios(Long movieId, Set<Long> studioIds) {
         Movie m = getEntity(movieId);
@@ -84,6 +104,9 @@ public class MovieService {
         return Mappers.toDTO(m);
     }
 
+    /**
+     * Replace production countries associated to a movie.
+     */
     @Transactional
     public MovieDTO attachCountries(Long movieId, Set<Long> ids) {
         Movie m = getEntity(movieId);
@@ -93,6 +116,9 @@ public class MovieService {
         return Mappers.toDTO(m);
     }
 
+    /**
+     * Replace languages associated to a movie.
+     */
     @Transactional
     public MovieDTO attachLanguages(Long movieId, Set<Long> ids) {
         Movie m = getEntity(movieId);
@@ -102,6 +128,9 @@ public class MovieService {
         return Mappers.toDTO(m);
     }
 
+    /**
+     * Search movies returning lightweight preview search results.
+     */
     public List<SearchResultDTO> searchPreview(String query, int limit) {
         return movieRepository.findByNameContainingIgnoreCase(query, PageRequest.of(0, limit))
                 .stream()
@@ -120,6 +149,9 @@ public class MovieService {
                 .orElseThrow(() -> new NotFoundException("Movie %d not found".formatted(id)));
     }
 
+    /**
+     * Pick a random high-rated movie and return its preview DTO.
+     */
     @Transactional(readOnly = true)
     public MoviePreviewDTO getRandomPreviewDto() {
         long total = movieRepository.countAllMoviesWithHighRating();
@@ -138,6 +170,9 @@ public class MovieService {
         return movieRepository.findTopRated(PageRequest.of(0, limit));
     }
 
+    /**
+     * Latest movies ordered by date.
+     */
     @Transactional(readOnly = true)
     public List<MoviePreviewDTO> getLatest(int limit) {
         return movieRepository.findLatest(PageRequest.of(0, limit));

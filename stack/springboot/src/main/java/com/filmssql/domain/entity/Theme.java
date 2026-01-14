@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Thematic tag associated with a movie.
+ */
 @Entity
 @Table(name = "themes")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

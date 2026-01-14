@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Actor participating in movies; linked one-to-one with {@link ActorInfo}.
+ */
 @Entity
 @Table(name = "actor")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

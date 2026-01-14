@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Generic person entity used for crew credits.
+ */
 @Entity
 @Table(name = "person")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

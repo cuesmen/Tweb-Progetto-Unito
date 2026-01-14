@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** Generic search result for movies and actors. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

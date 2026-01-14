@@ -8,9 +8,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Collection of mapping helpers between entities and DTOs.
+ */
 public final class Mappers {
     private Mappers() {}
 
+    /**
+     * Maps a full {@link Movie} aggregate to {@link MovieDTO}.
+     */
     public static MovieDTO toDTO(Movie m) {
         return new MovieDTO(
                 m.getId(),
@@ -34,6 +40,9 @@ public final class Mappers {
         );
     }
 
+    /**
+     * Maps a review entity to DTO.
+     */
     public static ReviewMovieDTO toReviewMovieDTO(ReviewMovie reviewMovie){
         if(reviewMovie == null) return null;
         return new ReviewMovieDTO(
@@ -48,6 +57,9 @@ public final class Mappers {
                 reviewMovie.getReview_content());
     }
 
+    /**
+     * Maps an Oscar award entity to DTO.
+     */
     public static OscarAwardDTO toOscarAwardDTO(OscarAward award) {
         if (award == null) return null;
         return new OscarAwardDTO(

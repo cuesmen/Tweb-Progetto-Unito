@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Oscar award entry, optionally linked to an actor or movie.
+ */
 @Entity
 @Table(name = "oscar_awards")
 @Getter

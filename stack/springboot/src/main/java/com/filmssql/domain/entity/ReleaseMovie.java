@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+/**
+ * Release information for a movie, including country, date and type.
+ */
 @Entity
 @Table(name = "releases_movies")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

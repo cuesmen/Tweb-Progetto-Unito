@@ -9,12 +9,20 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Service for actor-related operations and search previews.
+ */
 @Service
 @RequiredArgsConstructor
 public class ActorService {
 
     private final ActorRepository actorRepository;
 
+    /**
+     * Returns lightweight search results for actors matching the query.
+     * @param query partial name match.
+     * @param limit max results.
+     */
     public List<SearchResultDTO> searchPreview(String query, int limit) {
         return actorRepository.findByNameContainingIgnoreCase(query, PageRequest.of(0, limit))
                 .stream()

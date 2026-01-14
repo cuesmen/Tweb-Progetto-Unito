@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Country reference used for movie releases and production metadata.
+ */
 @Entity
 @Table(name = "country")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

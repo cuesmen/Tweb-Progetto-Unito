@@ -17,8 +17,8 @@ export function useMovieQuery(id) {
       } catch (err) {
         const status = err?.response?.status;
         if (status === 404) return null;
-        // On any other error (including aborted), return null so cache goes success and stops refetch loop.
-        return null;
+        // On other errors, bubble up so the UI can show a server/connectivity error.
+        throw err;
       }
     },
     select: (data) => (data ? Movie.fromApi(data) : null),

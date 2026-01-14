@@ -2,6 +2,7 @@ package com.filmssql.web.dto;
 
 import java.util.Set;
 
+/** Full movie payload with aggregates. */
 public record MovieDTO(
         Long id,
         String name,

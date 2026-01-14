@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Join entity linking actors to movies with the played role.
+ */
 @Entity
 @Table(name = "actors_movies")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

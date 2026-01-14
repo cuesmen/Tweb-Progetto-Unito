@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 
+/**
+ * Detailed biographical info for an actor, sharing primary key with {@link Actor}.
+ */
 @Entity
 @Table(name = "actor_infos")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

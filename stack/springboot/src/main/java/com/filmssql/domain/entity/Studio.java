@@ -3,6 +3,9 @@ package com.filmssql.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Studio/production company reference.
+ */
 @Entity
 @Table(name = "studio")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

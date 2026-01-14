@@ -37,7 +37,7 @@ export function useTopRatedMovies(limit = 10, enabled = true) {
     queryFn: ({ signal }) => MovieService.getTopRated({ limit, signal }),
     select: mapPreviewList,
     enabled,
-    retry: 1,
+    retry: 0,
   });
 }
 
@@ -54,6 +54,6 @@ export function useLatestMovies(limit = 10, enabled = true) {
     queryFn: ({ signal }) => MovieService.getLatest({ limit, signal }),
     select: mapPreviewList,
     enabled,
-    retry: 1,
+    retry: 0,
   });
 }

@@ -2,6 +2,7 @@ package com.filmssql.web.dto;
 
 import java.time.LocalDate;
 
+/** Release info payload for a movie. */
 public record ReleaseDTO(
         Long id,
         CountryDTO country,

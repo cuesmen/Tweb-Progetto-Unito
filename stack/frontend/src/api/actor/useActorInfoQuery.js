@@ -18,8 +18,8 @@ export function useActorInfoQuery(id) {
       } catch (err) {
         const status = err?.response?.status;
         if (status === 404) return null;
-        // On any other error (including aborted), return null to avoid refetch loops.
-        return null;
+        // On other errors, bubble up so the UI can show a server/connectivity error.
+        throw err;
       }
     },
     select: (data) => (data ? ActorInfo.fromApi(data) : null),

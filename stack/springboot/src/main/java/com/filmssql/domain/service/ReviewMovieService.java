@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service for movie critic reviews.
+ */
 @Service
 public class ReviewMovieService
 {
@@ -17,6 +20,9 @@ public class ReviewMovieService
         this.reviewMovieRepository = reviewMovieRepository;
     }
 
+    /**
+     * Returns all reviews for a movie or throws if none.
+     */
     @Transactional(readOnly = true)
     public List<ReviewMovie> getReviews(Long movieId) {
         List<ReviewMovie> reviews = reviewMovieRepository.findAllByMovieId(movieId);

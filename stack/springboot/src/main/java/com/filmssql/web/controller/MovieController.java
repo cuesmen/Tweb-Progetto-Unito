@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST endpoints for movies: details, previews, and listings.
+ */
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
@@ -15,27 +18,42 @@ public class MovieController {
     private final MovieService movieService;
     public MovieController(MovieService movieService){ this.movieService = movieService; }
 
+    /**
+     * Returns full movie details.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<MovieDTO> get(@PathVariable Long id){
         return ResponseEntity.ok(movieService.getDto(id));
     }
 
+    /**
+     * Returns a preview for a movie.
+     */
     @GetMapping("/{id}/preview")
     public ResponseEntity<MoviePreviewDTO> getPreview(@PathVariable Long id){
         return ResponseEntity.ok(movieService.getPreviewDto(id));
     }
 
+    /**
+     * Returns a random high-rated movie preview.
+     */
     @GetMapping("/random")
     public ResponseEntity<MoviePreviewDTO> random(){
         return ResponseEntity.ok(movieService.getRandomPreviewDto());
     }
 
+    /**
+     * Top-rated movie previews.
+     */
     @GetMapping("/top-rated")
     public ResponseEntity<List<MoviePreviewDTO>> topRated(
             @RequestParam(defaultValue = "10") int limit) {
         return ResponseEntity.ok(movieService.getTopRated(limit));
     }
 
+    /**
+     * Latest movie previews.
+     */
     @GetMapping("/latest")
     public ResponseEntity<List<MoviePreviewDTO>> latest(
             @RequestParam(defaultValue = "10") int limit) {

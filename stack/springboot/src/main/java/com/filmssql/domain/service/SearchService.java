@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Facade service combining movie and actor search results.
+ */
 @Service
 @RequiredArgsConstructor
 public class SearchService {
@@ -14,6 +17,9 @@ public class SearchService {
     private final MovieService movieService;
     private final ActorService actorService;
 
+    /**
+     * Combined search across movies and actors depending on requested types.
+     */
     public List<SearchResultDTO> search(String query, String type, int limit) {
         List<SearchResultDTO> results = new ArrayList<>();
 

@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * REST endpoints for Oscar award lookups by actor or movie.
+ */
 @RestController
 @RequestMapping("/api/oscaraward")
 public class OscarAwardController {
@@ -22,6 +25,9 @@ public class OscarAwardController {
         this.oscarAwardService = oscarAwardService;
     }
 
+    /**
+     * All Oscar awards for the given actor.
+     */
     @GetMapping("/actor/{actor_id}")
     public ResponseEntity<List<OscarAwardDTO>> getByActor(@PathVariable("actor_id") Long actorId) {
         List<OscarAwardDTO> body = oscarAwardService.getByActor(actorId).stream()
@@ -30,6 +36,9 @@ public class OscarAwardController {
         return ResponseEntity.ok(body);
     }
 
+    /**
+     * All Oscar awards for the given movie.
+     */
     @GetMapping("/movie/{movie_id}")
     public ResponseEntity<List<OscarAwardDTO>> getByMovie(@PathVariable("movie_id") Long movieId) {
         List<OscarAwardDTO> body = oscarAwardService.getByMovie(movieId).stream()

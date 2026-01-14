@@ -4,6 +4,7 @@ import logo from "../assets/images/logo.png";
 import { FiSearch, FiUser, FiFilm, FiAlertCircle } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSearchQuery } from "../api/search/useSearchQuery";
+import Alert from "../components/Alert";
 
 // debounce hook to avoid excessive API calls
 function useDebouncedValue(value, delay = 500) {
@@ -48,6 +49,7 @@ function SearchErrorState({ message }) {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
+  const [searchError, setSearchError] = useState(null);
   const searchRef = useRef(null);
   const navigate = useNavigate();
 
@@ -67,6 +69,13 @@ export default function Navbar() {
     error?.message ||
     error?.response?.data?.error?.message ||
     "Unable to complete search.";
+
+  useEffect(() => {
+    if (isError) {
+      setSearchError(errorMsg);
+      setQuery(""); // close dropdown on error
+    }
+  }, [isError, errorMsg]);
 
 
   useEffect(() => {
@@ -168,6 +177,17 @@ export default function Navbar() {
           <NavLink to="/global-chat" end>Global Chat</NavLink>
         </div>
       </div>
+
+      {searchError && (
+        <Alert
+          type="error"
+          title="Search"
+          description={searchError}
+          dismissible
+          onClose={() => setSearchError(null)}
+          className="nav-alert"
+        />
+      )}
 
       <div className="nav-spacer" style={{ height: scrolled ? 55 : 85 }} />
     </>

@@ -17,6 +17,7 @@ import { spring } from '../services/springClient.js';
  */
 export async function trySpringGet(paths, req) {
   let lastErr = null;
+
   for (const p of paths) {
     let url = p;
     for (const [k, v] of Object.entries(req.params || {})) {
@@ -27,8 +28,11 @@ export async function trySpringGet(paths, req) {
       return data;
     } catch (err) {
       lastErr = err;
-      throw err;
+      // keep trying the next path
     }
   }
-  throw lastErr ?? new Error('Upstream not found');
+
+  // if we reach here, all attempts failed
+  if (lastErr) throw lastErr;
+  throw new Error('Upstream not found');
 }
