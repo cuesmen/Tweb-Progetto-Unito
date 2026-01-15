@@ -46,9 +46,3 @@ including frontend and backend components.
 - Large datasets are intentionally excluded from version control.
 - The repository focuses on code, analysis logic, and documentation.
 - The project was developed for academic purposes within the IUM–TWEB course.
-
----
-
-## License
-
-This project is intended for educational use only.
