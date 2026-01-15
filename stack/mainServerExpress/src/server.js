@@ -25,6 +25,18 @@ const app = express();
 app.use(cors({ origin: ENV.SPA_ORIGIN, credentials: true }));
 app.use(express.json());
 
+app.use((req, _res, next) => {
+  console.log(
+    `[REQ] ${req.method} ${req.originalUrl}`,
+    {
+      params: req.params,
+      query: req.query,
+      body: Object.keys(req.body || {}).length ? req.body : undefined
+    }
+  );
+  next();
+});
+
 app.use('/api', systemRoutes);
 app.use('/api', moviesRoutes);
 app.use('/api', actorsRoutes);
@@ -34,16 +46,41 @@ app.use('/api', reviewsRoutes);
 app.use('/api', oscarRoutes);
 
 app.use((err, _req, res, _next) => {
-  const status = err.response?.status || err.statusCode || 500;
-  const message = err.response?.data?.message || err.message || 'INTERNAL_ERROR';
-  const code = err.code || 'UNEXPECTED_ERROR';
+  if (
+    err?.name === 'AbortError' ||
+    err?.code === 'ECONNRESET' ||
+    err?.code === 'ERR_CANCELED' ||
+    err?.message?.toLowerCase()?.includes('aborted')
+  ) {
+    return res.status(499).end();
+  }
 
-  res.status(status).json({
+  if (err.response) {
+    return res.status(err.response.status || 502).json({
+      ok: false,
+      data: null,
+      error: {
+        code: err.code || 'UPSTREAM_ERROR',
+        message:
+          err.response.data?.message ||
+          err.response.data?.error ||
+          err.message,
+      },
+    });
+  }
+
+  console.error('🔥 INTERNAL ERROR:', err);
+
+  res.status(err.statusCode || 500).json({
     ok: false,
     data: null,
-    error: { code, message },
+    error: {
+      code: err.code || 'INTERNAL_SERVER_ERROR',
+      message: err.message || 'Unexpected server error',
+    },
   });
 });
+
 
 if (ENV.ENABLE_DOCS === 'true') setupSwagger(app);
 
@@ -83,7 +120,7 @@ io.on('connection', (socket) => {
 
 server.listen(ENV.PORT, () => {
   connectMongoose().then(() => {
-    console.log(`✅ Gateway running on http://localhost:${ENV.PORT}`);
+    console.log(`Gateway running on http://localhost:${ENV.PORT}`);
   }).catch((err) => {
     console.error('Mongo connection failed:', err);
   });

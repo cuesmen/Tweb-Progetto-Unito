@@ -169,7 +169,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(ENV.PORT, () => {
-  console.log(`✅ Gateway running on http://localhost:${ENV.PORT}`);
+  console.log(`Gateway running on http://localhost:${ENV.PORT}`);
 });
 
 const shutdown = async (signal) => {

@@ -3,6 +3,8 @@ package com.filmssql.web.controller;
 import com.filmssql.domain.service.MovieService;
 import com.filmssql.web.dto.MovieDTO;
 import com.filmssql.web.dto.MoviePreviewDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
+
+    private static final Logger log = LoggerFactory.getLogger(MovieController.class);
 
     private final MovieService movieService;
     public MovieController(MovieService movieService){ this.movieService = movieService; }
@@ -48,7 +52,15 @@ public class MovieController {
     @GetMapping("/top-rated")
     public ResponseEntity<List<MoviePreviewDTO>> topRated(
             @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(movieService.getTopRated(limit));
+        long started = System.currentTimeMillis();
+        try {
+            List<MoviePreviewDTO> data = movieService.getTopRated(limit);
+            log.info("GET /api/movies/top-rated limit={} -> {} items in {}ms", limit, data.size(), System.currentTimeMillis() - started);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            log.error("GET /api/movies/top-rated limit={} failed after {}ms", limit, System.currentTimeMillis() - started, e);
+            throw e;
+        }
     }
 
     /**
@@ -57,7 +69,15 @@ public class MovieController {
     @GetMapping("/latest")
     public ResponseEntity<List<MoviePreviewDTO>> latest(
             @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(movieService.getLatest(limit));
+        long started = System.currentTimeMillis();
+        try {
+            List<MoviePreviewDTO> data = movieService.getLatest(limit);
+            log.info("GET /api/movies/latest limit={} -> {} items in {}ms", limit, data.size(), System.currentTimeMillis() - started);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            log.error("GET /api/movies/latest limit={} failed after {}ms", limit, System.currentTimeMillis() - started, e);
+            throw e;
+        }
     }
 
 }

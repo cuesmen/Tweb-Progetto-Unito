@@ -49,14 +49,12 @@ export default function Chat({
     socket.on("connect_error", onConnectError);
     socket.on("error", onError);
     socket.on("connect", onConnect);
-    socket.emit("chat:join", room);
     socketRef.current = socket;
     return () => {
+      socket.disconnect();
       socket.off("connect_error", onConnectError);
       socket.off("error", onError);
       socket.off("connect", onConnect);
-      socket.emit("chat:leave", room);
-      socket.disconnect();
     };
   }, [room, socketUrl]);
 
@@ -82,11 +80,11 @@ export default function Chat({
     return () => clearInterval(id);
   }, []);
 
-  // scroll to bottom on new message
+  // keep view pinned to the newest messages (top of the list)
   useEffect(() => {
     const el = messageListRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    el.scrollTo({ top: 0, behavior: "smooth" });
   }, [messages]);
 
   const trimmedName = username.trim();

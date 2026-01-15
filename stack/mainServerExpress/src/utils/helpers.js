@@ -20,19 +20,32 @@ export async function trySpringGet(paths, req) {
 
   for (const p of paths) {
     let url = p;
-    for (const [k, v] of Object.entries(req.params || {})) {
+    const params = req?.params || {};   // req can be null/undefined; default to empty object
+    const query = req?.query;           // query is optional
+
+    // interpolate path params like :id using provided params
+    for (const [k, v] of Object.entries(params)) {
       url = url.replace(new RegExp(`:${k}\\b`, 'g'), encodeURIComponent(String(v)));
     }
+
     try {
-      const { data } = await spring.get(url, { params: req.query });
+      const { data } = await spring.get(url, { params: query });
       return data;
     } catch (err) {
       lastErr = err;
-      // keep trying the next path
+      console.error('[SPRING GET] failed', {
+        url,
+        status: err?.response?.status,
+        code: err?.code,
+        message: err?.message,
+        params,
+        query,
+      });
+      // keep trying the next candidate path
     }
   }
 
-  // if we reach here, all attempts failed
+  // all attempts failed
   if (lastErr) throw lastErr;
   throw new Error('Upstream not found');
 }

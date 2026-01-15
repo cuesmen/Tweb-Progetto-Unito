@@ -52,8 +52,8 @@ export function useApiQuery({
 
   const snapshot = useSyncExternalStore(subscribe, getSnapshot);
 
-  // If the last fetch errored and retry is 0, avoid further fetches until refetch is called manually.
-  const haltOnError = snapshot.status === "error" && retry === 0;
+  // If the last fetch errored, avoid auto-refetch loops; manual refetch or stale invalidation will re-run.
+  const haltOnError = snapshot.status === "error";
 
   useEffect(() => {
     if (!enabled) return;
@@ -69,9 +69,8 @@ export function useApiQuery({
     const noData = typeof snapshot.data === "undefined";
     const shouldFetch =
       snapshot.status === "idle" ||
-      (snapshot.status === "error" && retry > 0) ||
-      (!haltOnError && noData && snapshot.status !== "loading" && snapshot.status !== "error") ||
-      (!haltOnError && isStale && snapshot.status !== "error");
+      (!haltOnError && noData && snapshot.status !== "loading") ||
+      (!haltOnError && isStale && snapshot.status === "success");
 
     if (!shouldFetch) return;
 

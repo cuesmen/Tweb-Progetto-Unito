@@ -14,9 +14,9 @@ import AppRoutes from '../navigation/Routes.jsx'
 import { LoaderProvider } from '../hooks/LoaderProvider.jsx';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <LoaderProvider>
       <AppRoutes />
     </LoaderProvider>
-  </StrictMode>,
+ // </StrictMode>,
 )

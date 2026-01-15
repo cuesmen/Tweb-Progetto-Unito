@@ -53,77 +53,6 @@ const router = express.Router();
 
 /**
  * @openapi
- * /api/movies/{id}:
- *   get:
- *     summary: Return movie details
- *     tags: [Movies]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Movie ID
- *     responses:
- *       200:
- *         description: Movie data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 1000048
- *                 name:
- *                   type: string
- *                   example: "Inception"
- *                 cast:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       actorId:
- *                         type: integer
- *                         example: 84742
- *                       name:
- *                         type: string
- *                         example: "Leonardo DiCaprio"
- *                       imageUrl:
- *                         type: string
- *                         example: "http://localhost:8080/actors/58.jpg"
- *       404:
- *         description: Movie not found
- */
-router.get("/movies/:id", async (req, res, next) => {
-  try {
-    const data = await trySpringGet(["/api/movies/:id", "/movies/:id"], req);
-    if (!data) {
-      return res.status(404).json({
-        ok: false,
-        data: null,
-        error: { code: "MOVIE_NOT_FOUND", message: "Movie not found" },
-      });
-    }
-
-    const enriched = {
-      ...data,
-      cast: Array.isArray(data?.cast)
-        ? data.cast.map((c) => ({
-            ...c,
-            imageUrl: c.imagePath ? buildImageUrl(c.imagePath) : null,
-          }))
-        : [],
-    };
-
-    res.json({ ok: true, data: enriched, error: null });
-  } catch (e) {
-    next(e);
-  }
-});
-
-/**
- * @openapi
  * /api/movies/random:
  *   get:
  *     summary: Return a random movie (shuffle)
@@ -167,7 +96,7 @@ router.get("/movies/random", async (req, res, next) => {
   try {
     const data = await trySpringGet(
       ["/api/movies/random", "/movies/random"],
-      req
+      null
     );
 
     if (!data) {
@@ -320,7 +249,7 @@ router.get("/movies/top-rated", async (req, res, next) => {
 router.get("/movies/latest", async (req, res, next) => {
   try {
     const upstream = await trySpringGet(
-      ["/api/movies/latest", "/movies/latest"],
+      ["/api/movies/latest", "/movies/latest"], 
       req
     );
 
@@ -341,6 +270,77 @@ router.get("/movies/latest", async (req, res, next) => {
     return res.json({ ok: true, data, error: null });
   } catch (e) {
     return next(e);
+  }
+});
+
+/**
+ * @openapi
+ * /api/movies/{id}:
+ *   get:
+ *     summary: Return movie details
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Movie ID
+ *     responses:
+ *       200:
+ *         description: Movie data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1000048
+ *                 name:
+ *                   type: string
+ *                   example: "Inception"
+ *                 cast:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       actorId:
+ *                         type: integer
+ *                         example: 84742
+ *                       name:
+ *                         type: string
+ *                         example: "Leonardo DiCaprio"
+ *                       imageUrl:
+ *                         type: string
+ *                         example: "http://localhost:8080/actors/58.jpg"
+ *       404:
+ *         description: Movie not found
+ */
+router.get("/movies/:id", async (req, res, next) => {
+  try {
+    const data = await trySpringGet(["/api/movies/:id", "/movies/:id"], req);
+    if (!data) {
+      return res.status(404).json({
+        ok: false,
+        data: null,
+        error: { code: "MOVIE_NOT_FOUND", message: "Movie not found" },
+      });
+    }
+
+    const enriched = {
+      ...data,
+      cast: Array.isArray(data?.cast)
+        ? data.cast.map((c) => ({
+            ...c,
+            imageUrl: c.imagePath ? buildImageUrl(c.imagePath) : null,
+          }))
+        : [],
+    };
+
+    res.json({ ok: true, data: enriched, error: null });
+  } catch (e) {
+    next(e);
   }
 });
 

@@ -200,19 +200,40 @@ router.post('/chat/movie/:movieId/messages', async (req, res, next) => {
  */
 export function useChatSocket(io) {
   return (socket) => {
-    socket.on('chat:message', async ({ room, username, text }, ack) => {
+
+    //room "global"    -> [socket1, socket2]
+    //room "movie:42"  -> [socket3]
+
+    socket.on("chat:join", (room) => {
+      const chatId = makeChatId(room);
+      if (!chatId) return;
+      socket.join(chatId);
+    });
+
+    socket.on("chat:leave", (room) => {
+      const chatId = makeChatId(room);
+      if (!chatId) return;
+      socket.leave(chatId);
+    });
+
+    // message send
+    socket.on("chat:message", async ({ room, username, text }, ack) => {
       try {
         const chatId = makeChatId(room);
-        if (!chatId) return ack?.({ error: 'BAD_ROOM' });
+        if (!chatId) return ack?.({ error: "BAD_ROOM" });
+
         const usernameNorm = normalizeUsername(username);
         const textNorm = normalizeText(text);
-        if (!usernameNorm || !textNorm) return ack?.({ error: 'BAD_REQUEST' });
+        if (!usernameNorm || !textNorm) {
+          return ack?.({ error: "BAD_REQUEST" });
+        }
 
         const now = new Date();
-        const type = chatId === 'global' ? 'global' : 'movie';
-        const movieId = chatId.startsWith('movie:') ? chatId.slice(6) : null;
+        const type = chatId === "global" ? "global" : "movie";
+        const movieId = chatId.startsWith("movie:") ? chatId.slice(6) : null;
 
         await upsertChat({ chatId, type, movieId, now });
+
         const saved = await insertMessageAndBroadcast({
           req: { app: { get: () => io } },
           chatId,
@@ -220,35 +241,43 @@ export function useChatSocket(io) {
           text: textNorm,
           now,
         });
+
         ack?.(saved);
       } catch (err) {
-        ack?.({ error: err.message || 'SEND_ERROR' });
+        ack?.({ error: err.message || "SEND_ERROR" });
       }
     });
 
-    socket.on('chat:list', async ({ room, limit = 20, cursor = null }, ack) => {
+    // message list
+    socket.on("chat:list", async ({ room, limit = 20, cursor = null }, ack) => {
       try {
         const chatId = makeChatId(room);
-        if (!chatId) return ack?.({ error: 'BAD_ROOM' });
+        if (!chatId) return ack?.({ error: "BAD_ROOM" });
+
         const lim = Math.max(1, Math.min(Number(limit) || 20, 100));
         const filter = { chatId };
+
         if (cursor && mongoose.Types.ObjectId.isValid(cursor)) {
           filter._id = { $lt: new mongoose.Types.ObjectId(cursor) };
         }
+
         const docs = await MessageModel.find(filter)
           .sort({ _id: -1 })
           .limit(lim + 1)
           .lean();
-        const items = docs;
-        const nextCursor = docs.length === lim + 1 ? docs[docs.length - 1]._id : null;
-        const hasMore = Boolean(nextCursor);
-        ack?.({ items: hasMore ? items.slice(0, lim) : items, nextCursor, hasMore });
+
+        const hasMore = docs.length === lim + 1;
+        const items = hasMore ? docs.slice(0, lim) : docs;
+        const nextCursor = hasMore ? String(items[items.length - 1]._id) : null;
+
+        ack?.({ items, nextCursor, hasMore });
       } catch (err) {
-        ack?.({ error: err.message || 'LIST_ERROR' });
+        ack?.({ error: err.message || "LIST_ERROR" });
       }
     });
   };
 }
+
 
 /**
  * @openapi
