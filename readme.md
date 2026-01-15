@@ -29,8 +29,7 @@ Includes standalone Python examples scripts developed with **pandas** and **nump
 to clean, transform, and prepare the datasets used in the analysis.
 
 ### 📁 `queryexamples/`
-Contains example queries used to interact with the project database,
-demonstrating data extraction and aggregation logic.
+Contains example queries screenshots used to interact with the project database, demonstrating data extraction and aggregation logic.
 
 ### 📁 `report/`
 Holds the **final project report**, summarizing the methodology,
