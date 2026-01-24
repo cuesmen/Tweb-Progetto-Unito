@@ -1,0 +1,194 @@
+import React, { useEffect, useState, useRef } from "react";
+import logo from "../../assets/images/logo.png";
+import { FiSearch, FiUser, FiFilm, FiAlertCircle } from "react-icons/fi";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useSearchQuery } from "../../api/search/useSearchQuery";
+import Alert from "../../components/Alert";
+
+// debounce hook to avoid excessive API calls
+function useDebouncedValue(value, delay = 500) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
+
+// single search result item component
+function SearchResult({ result, onClick }) {
+  return (
+    <div className="search-item" onClick={onClick}>
+      {result.imageUrl && (
+        <img
+          src={result.imageUrl}
+          alt={result.title}
+          className="search-thumb"
+        />
+      )}
+      <span className="search-title">{result.title}</span>
+      <span className="search-type">
+        {result.type === "actor" ? <FiUser /> : <FiFilm />}
+      </span>
+    </div>
+  );
+}
+
+function SearchErrorState({ message }) {
+  return (
+    <div className="search-item empty error">
+      <FiAlertCircle
+        style={{ opacity: 0.8, marginRight: 8, color: "var(--main-color)" }}
+      />
+      <span>{message || "An unexpected error occurred."}</span>
+    </div>
+  );
+}
+
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [query, setQuery] = useState("");
+  const [searchError, setSearchError] = useState(null);
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+
+  const debouncedQuery = useDebouncedValue(query, 500);
+
+ // Fetch search results when debounced query changes
+  const {
+    data: resultsRaw,
+    isLoading,
+    isError,
+    error,
+  } = useSearchQuery(debouncedQuery);
+
+  const results = Array.isArray(resultsRaw) ? resultsRaw : [];
+
+  const errorMsg =
+    error?.message ||
+    error?.response?.data?.error?.message ||
+    "Unable to complete search.";
+
+  useEffect(() => {
+    if (isError) {
+      setSearchError(errorMsg);
+      setQuery(""); // close dropdown on error
+    }
+  }, [isError, errorMsg]);
+
+
+  useEffect(() => {
+    const mainEl = document.querySelector(".app-main");
+    const opts = { passive: true };
+
+    const getScrollY = () => {
+      const mainScroll = mainEl ? mainEl.scrollTop : 0;
+      const globalScroll =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
+      return Math.max(mainScroll, globalScroll);
+    };
+
+    const handleScroll = () => {
+      setScrolled(getScrollY() > 50);
+    };
+
+    const raf = requestAnimationFrame(handleScroll);
+
+    window.addEventListener("scroll", handleScroll, opts);
+    if (mainEl) {
+      mainEl.addEventListener("scroll", handleScroll, opts);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", handleScroll, opts);
+      if (mainEl) {
+        mainEl.removeEventListener("scroll", handleScroll, opts);
+      }
+    };
+  }, []);
+    
+
+  // close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <>
+      <div className={`upperNav ${scrolled ? "scrolled" : ""}`}>
+        <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+          <img onClick={() => navigate("/")} className="logo" src={logo} alt="Logo" />
+
+          <div className="search-container" ref={searchRef}>
+            <input
+              type="text"
+              placeholder="Search for a movie or actor..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <FiSearch className="search-icon" />
+
+            {query.length >= 2 && (
+              <div className="search-dropdown">
+                {isLoading && <div className="search-item">Loading...</div>}
+                {isError && <SearchErrorState message={errorMsg} />}
+                {!isError && !isLoading && results.length === 0 && (
+                  <div className="search-item empty">
+                    <FiSearch style={{ opacity: 0.5, marginRight: 8 }} />
+                    No results found
+                  </div>
+                )}
+                {!isLoading &&
+                  !isError &&
+                  results.map((r) => (
+                    <SearchResult
+                      key={`${r.type}-${r.id}`}
+                      result={r}
+                      onClick={() => {
+                        navigate(`/${r.type === "actor" ? "actor" : "movie"}/${r.id}`);
+                        setQuery("");
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    />
+                  ))}
+              </div>
+            )}
+          </div>
+
+          <div className="nav-welcome">
+            Welcome Guest! <a>Login / Register</a>
+          </div>
+        </nav>
+
+        <div className={`nav-links ${scrolled ? "scrolled" : ""}`}>
+          <NavLink to="/" end>Home</NavLink>
+          <NavLink to="/global-chat" end>Global Chat</NavLink>
+        </div>
+      </div>
+
+      {searchError && (
+        <Alert
+          type="error"
+          title="Search"
+          description={searchError}
+          dismissible
+          onClose={() => setSearchError(null)}
+          className="nav-alert"
+        />
+      )}
+
+      <div className="nav-spacer" style={{ height: scrolled ? 55 : 85 }} />
+    </>
+  );
+}

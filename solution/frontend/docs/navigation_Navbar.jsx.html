@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: navigation/Navbar.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: navigation/Navbar.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState, useRef } from "react";
+import "../css/navbar.css";
+import logo from "../assets/images/logo.png";
+import { FiSearch, FiUser, FiFilm, FiAlertCircle } from "react-icons/fi";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useSearchQuery } from "../api/search/useSearchQuery";
+
+/** Debounce hook to avoid excessive API calls */
+function useDebouncedValue(value, delay = 500) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
+
+/** Single search result item */
+function SearchResult({ result, onClick }) {
+  return (
+    &lt;div className="search-item" onClick={onClick}>
+      {result.imageUrl &amp;&amp; (
+        &lt;img
+          src={result.imageUrl}
+          alt={result.title}
+          className="search-thumb"
+        />
+      )}
+      &lt;span className="search-title">{result.title}&lt;/span>
+      &lt;span className="search-type">
+        {result.type === "actor" ? &lt;FiUser /> : &lt;FiFilm />}
+      &lt;/span>
+    &lt;/div>
+  );
+}
+
+function SearchErrorState({ message }) {
+  return (
+    &lt;div className="search-item empty error">
+      &lt;FiAlertCircle
+        style={{ opacity: 0.8, marginRight: 8, color: "var(--main-color)" }}
+      />
+      &lt;span>{message || "An unexpected error occurred."}&lt;/span>
+    &lt;/div>
+  );
+}
+
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+
+  const debouncedQuery = useDebouncedValue(query, 500);
+
+  // Query search results
+  const {
+    data: resultsRaw,
+    isLoading,
+    isError,
+    error,
+  } = useSearchQuery(debouncedQuery);
+
+  const results = Array.isArray(resultsRaw) ? resultsRaw : [];
+
+  const errorMsg =
+    error?.message ||
+    error?.response?.data?.error?.message ||
+    "Unable to complete search.";
+
+
+  useEffect(() => {
+    const mainEl = document.querySelector(".app-main");
+    const opts = { passive: true };
+
+    const getScrollY = () => {
+      const mainScroll = mainEl ? mainEl.scrollTop : 0;
+      const globalScroll =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
+      return Math.max(mainScroll, globalScroll);
+    };
+
+    const handleScroll = () => {
+      setScrolled(getScrollY() > 50);
+    };
+
+    const raf = requestAnimationFrame(handleScroll);
+
+    window.addEventListener("scroll", handleScroll, opts);
+    if (mainEl) {
+      mainEl.addEventListener("scroll", handleScroll, opts);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", handleScroll, opts);
+      if (mainEl) {
+        mainEl.removeEventListener("scroll", handleScroll, opts);
+      }
+    };
+  }, []);
+    
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current &amp;&amp; !searchRef.current.contains(e.target)) {
+        setQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    &lt;>
+      &lt;div className={`upperNav ${scrolled ? "scrolled" : ""}`}>
+        &lt;nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+          &lt;img onClick={() => navigate("/")} className="logo" src={logo} alt="Logo" />
+
+          &lt;div className="search-container" ref={searchRef}>
+            &lt;input
+              type="text"
+              placeholder="Search for a movie or actor..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            &lt;FiSearch className="search-icon" />
+
+            {query.length >= 2 &amp;&amp; (
+              &lt;div className="search-dropdown">
+                {isLoading &amp;&amp; &lt;div className="search-item">Loading...&lt;/div>}
+                {isError &amp;&amp; &lt;SearchErrorState message={errorMsg} />}
+                {!isError &amp;&amp; !isLoading &amp;&amp; results.length === 0 &amp;&amp; (
+                  &lt;div className="search-item empty">
+                    &lt;FiSearch style={{ opacity: 0.5, marginRight: 8 }} />
+                    No results found
+                  &lt;/div>
+                )}
+                {!isLoading &amp;&amp;
+                  !isError &amp;&amp;
+                  results.map((r) => (
+                    &lt;SearchResult
+                      key={`${r.type}-${r.id}`}
+                      result={r}
+                      onClick={() => {
+                        navigate(`/${r.type === "actor" ? "actor" : "film"}/${r.id}`);
+                        setQuery("");
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    />
+                  ))}
+              &lt;/div>
+            )}
+          &lt;/div>
+
+          &lt;div className="nav-welcome">
+            Welcome Guest! &lt;a>Login / Register&lt;/a>
+          &lt;/div>
+        &lt;/nav>
+
+        &lt;div className={`nav-links ${scrolled ? "scrolled" : ""}`}>
+          &lt;NavLink to="/" end>Home&lt;/NavLink>
+          &lt;NavLink to="/global-chat" end>Global Chat&lt;/NavLink>
+        &lt;/div>
+      &lt;/div>
+
+      &lt;div className="nav-spacer" style={{ height: scrolled ? 55 : 85 }} />
+    &lt;/>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SearchResult">SearchResult</a></li><li><a href="global.html#mapPreviewList">mapPreviewList</a></li><li><a href="global.html#useChatRoom">useChatRoom</a></li><li><a href="global.html#useDebouncedValue">useDebouncedValue</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Jan 06 2026 23:11:15 GMT+0100 (Ora standard dell’Europa centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

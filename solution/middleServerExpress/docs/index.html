@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Home</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">MainServerExpress Docs</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p></p>
+                    <h1>Home</h1>
+                </header>
+                
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>MainServerExpress</h1>
+<p>Express/Socket.IO gateway for MoviePoint App. It proxies API calls to the Spring backend (<code>SPRING_URL</code>), serves OpenAPI docs, and handles chat persistence on MongoDB.</p>
+<h2>Requirements</h2>
+<ul>
+<li>Node.js 18+ and npm</li>
+<li>MongoDB reachable at <code>MONGO_URI</code> (default <code>mongodb://127.0.0.1:27017</code>)</li>
+<li>Spring backend running (default <code>http://localhost:8081</code>) exposing movie/actor APIs</li>
+</ul>
+<h2>Quick start</h2>
+<ol>
+<li>Install dependencies: <code>npm install</code></li>
+<li>Create a <code>.env</code> (see variables below) or rely on defaults.</li>
+<li>Run:
+<ul>
+<li>development: <code>npm run dev</code> (nodemon)</li>
+<li>production: <code>npm start</code></li>
+</ul>
+</li>
+<li>OpenAPI docs available at <code>http://localhost:4000/docs</code> (or your port) when <code>ENABLE_DOCS=true</code>.</li>
+</ol>
+<h3>Environment variables (.env)</h3>
+<pre class="prettyprint source"><code>PORT=4000                        # Gateway port
+SPA_ORIGIN=http://localhost:5173 # CORS origin for the SPA
+SPRING_URL=http://localhost:8081 # Upstream Spring backend
+ENABLE_DOCS=true                 # Serve /docs and /openapi.json
+IMG_BASE_URL=                    # Base URL for images (fallback: SPRING_URL + '/')
+
+# MongoDB chat
+MONGO_URI=mongodb://127.0.0.1:27017
+MONGO_DB=appdb
+MONGO_MAX_RETRIES=5
+MONGO_MIN_POOL_SIZE=0
+MONGO_MAX_POOL_SIZE=20
+</code></pre>
+<h2>Architecture at a glance</h2>
+<ul>
+<li><strong>Express 5 + Axios</strong>: proxies to Spring for <code>Movies</code>, <code>Actors</code>, <code>Reviews</code>, <code>OscarAwards</code>, and <code>Search</code>.</li>
+<li><strong>CORS</strong> enforced on <code>SPA_ORIGIN</code>; JSON parsing enabled on all <code>/api</code> routes.</li>
+<li><strong>Swagger/OpenAPI</strong> generated from JSDoc annotations in <code>src/routes</code> and served under <code>/docs</code>.</li>
+<li><strong>Socket.IO</strong>: websocket transport for chat rooms (<code>global</code> or <code>movie:&lt;id&gt;</code>) and broadcasts on new messages.</li>
+<li><strong>MongoDB</strong>: bootstraps <code>chats</code> and <code>messages</code> collections with indexes; health-check exposed at <code>/api/chat/health</code>.</li>
+<li><strong>In-memory cache</strong> (NodeCache) for searches; TTL 60s.</li>
+<li><strong>Images</strong>: <code>buildImageUrl</code> helper composes image links using <code>IMG_BASE_URL</code>.</li>
+</ul>
+<h2>Project structure</h2>
+<pre class="prettyprint source"><code>src/
+  config/        # Env handling and Swagger setup
+  routes/        # REST endpoints (movies, actors, search, reviews, oscar, chat)
+  services/      # Spring client and cache
+  mongodb/       # Mongo connection, health, and collection bootstrap
+  utils/         # Image, gender, and request helpers
+  server.js      # Express/Socket.IO bootstrap and error handling
+</code></pre>
+<h2>Key endpoints</h2>
+<ul>
+<li><code>GET /api/ping</code> – gateway health.</li>
+<li>Movies: <code>GET /api/movies/:id</code>, <code>/movies/random</code>, <code>/movies/top-rated</code>, <code>/movies/latest</code>.</li>
+<li>Actors: <code>GET /api/actors/:actorId/info</code>.</li>
+<li>Reviews: <code>GET /api/reviewmovie/:id</code>.</li>
+<li>Oscar: <code>GET /api/oscaraward/actor/:actor_id</code>, <code>/oscaraward/movie/:movie_id</code>.</li>
+<li>Search: <code>GET /api/search?query=&lt;text&gt;</code> (movie/actor results, cached 60s).</li>
+<li>Chat (Mongo):
+<ul>
+<li><code>POST /api/chat/global/messages</code>, <code>GET /api/chat/global/messages</code></li>
+<li><code>POST /api/chat/movie/:movieId/messages</code>, <code>GET /api/chat/movie/:movieId/messages</code></li>
+<li><code>GET /api/chat/movie/:movieId</code> metadata; <code>GET /api/chat/health</code> Mongo/collection status.</li>
+</ul>
+</li>
+</ul>
+<h2>Socket.IO events</h2>
+<ul>
+<li>Client emits <code>chat:join</code> with <code>global</code> or <code>movie:&lt;movieId&gt;</code>; receives <code>chat:joined</code>.</li>
+<li><code>chat:leave</code> leaves a room; receives <code>chat:left</code>.</li>
+<li>Messages saved via REST are broadcast as <code>chat:message</code> to the relevant room.</li>
+</ul>
+<h2>npm scripts</h2>
+<ul>
+<li><code>npm run dev</code> – start with hot reload (nodemon).</li>
+<li><code>npm start</code> – start for production.</li>
+<li><code>npm run docs</code> – generate JSDoc (output configured via <code>jsdoc.json</code>).</li>
+</ul>
+<h2>Operational notes</h2>
+<ul>
+<li>Start Mongo before the gateway; the code auto-creates collections/indexes and the global chat.</li>
+<li>Spring proxy preserves query/path params; upstream errors are surfaced via the error middleware with <code>{ ok, data, error }</code>.</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

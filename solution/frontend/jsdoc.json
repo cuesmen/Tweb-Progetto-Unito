@@ -1,0 +1,27 @@
+{
+    "source": {
+        "include": [
+            "src"
+        ],
+        "includePattern": "\\.(js|jsx)$",
+        "excludePattern": "(node_modules|docs)"
+    },
+    "opts": {
+        "destination": "docs",
+        "recurse": true,
+        "template": "node_modules/better-docs",
+        "readme": "README.md"
+    },
+    "sourceType": "module",
+    "plugins": [
+        "plugins/markdown",
+        "node_modules/better-docs/category"
+      ],
+    "templates": {
+        "better-docs": {
+            "name": "Frontend Docs"
+        },
+        "cleverLinks": true,
+        "monospaceLinks": true
+    }
+}
