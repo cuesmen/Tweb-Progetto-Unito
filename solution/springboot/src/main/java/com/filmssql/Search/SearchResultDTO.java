@@ -1,0 +1,16 @@
+package com.filmssql.Search;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/** Generic search result for movies and actors. */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class SearchResultDTO {
+    private Long id;
+    private String type;    // "movie" or "actor"
+    private String title;
+    private String imageUrl;
+}
