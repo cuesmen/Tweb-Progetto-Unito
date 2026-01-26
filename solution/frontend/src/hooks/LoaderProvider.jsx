@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import Loader from '../components/Loader';
+import Loader from '../views/components/Loader';
 
 const LoaderCtx = createContext(null);
 

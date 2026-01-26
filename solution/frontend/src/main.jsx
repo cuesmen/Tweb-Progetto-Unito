@@ -1,16 +1,17 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './css/index.css'
-import './css/film.css'
-import './css/components.css'
-import './css/home.css'
-import './css/homecarousel.css'
-import './css/actor.css'
-import './css/filmchat.css'
-import './css/filmreviews.css'
-import './css/oscarawards.css'
-import "./css/footer.css";
-import "./css/navbar.css";
+import './assets/stylesheets/index.css'
+import './assets/stylesheets/film.css'
+import './assets/stylesheets/components.css'
+import './assets/stylesheets/home.css'
+import './assets/stylesheets/homecarousel.css'
+import './assets/stylesheets/actor.css'
+import './assets/stylesheets/filmchat.css'
+import './assets/stylesheets/filmreviews.css'
+import './assets/stylesheets/oscarawards.css'
+import './assets/stylesheets/footer.css'
+import './assets/stylesheets/navbar.css'
+import './assets/stylesheets/loader.css';
 import 'flag-icons/css/flag-icons.min.css';
 import AppRoutes from './navigation/Routes.jsx'
 import { LoaderProvider } from './hooks/LoaderProvider.jsx';

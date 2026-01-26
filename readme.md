@@ -35,7 +35,7 @@ Contains example queries screenshots used to interact with the project database,
 Holds the **final project report**, summarizing the methodology,
 analysis results, and conclusions of the work.
 
-### 📁 `stack/`
+### 📁 `solution/`
 Contains the full **source code of the MoviePoint web application**,
 including frontend and backend components.
 

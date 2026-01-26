@@ -1,6 +1,6 @@
 package com.filmssql.util;
 import com.filmssql.domain.entity.ActorInfo;
-import com.filmssql.dto.ActorInfoDTO;
+import com.filmssql.domain.dto.ActorInfoDTO;
 
 /**
  * Utility mapper for converting {@link ActorInfo} entities to DTOs.

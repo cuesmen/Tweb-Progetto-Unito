@@ -1,5 +1,5 @@
 import logo from '../../assets/images/logo.png'
-import InputField from "../../components/InputField";
+import InputField from "../../views/components/InputField";
 import { MdPlayArrow } from "react-icons/md";
 
 

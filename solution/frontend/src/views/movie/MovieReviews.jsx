@@ -11,7 +11,6 @@ import {
     FiThumbsUp as FiThumbsUpOutline,
 } from "react-icons/fi";
 import { useReviewInfoQuery } from "../../api/review/useReviewQuery";
-import "../../css/filmreviews.css";
 import { FaStar } from "react-icons/fa";
 import { FaThumbsUp } from "react-icons/fa";
 import { FaThumbsDown } from "react-icons/fa";

@@ -1,6 +1,6 @@
 package com.filmssql.domain.service;
 
-import com.filmssql.dto.SearchResultDTO;
+import com.filmssql.domain.dto.SearchResultDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,5 @@
-import DefaultPage from "../../components/DefaultPage";
-import Chat from "../../components/Chat";
+import DefaultPage from "../../views/components/DefaultPage";
+import Chat from "../../views/components/Chat";
 
 export default function GlobalChat() {
     return (

@@ -5,7 +5,7 @@ import NavBar from "../views/navbar/Navbar";
 import Movie from "../views/movie/Movie";
 import ActorPage from "../views/actor/ActorPage";
 import Footer from "../views/footer/Footer";
-import BackToTopArrow from "../components/BackToTopArrow";
+import BackToTopArrow from "../views/components/BackToTopArrow";
 import GlobalChat from "../views/globalchat/GlobalChat";
 
 export default function AppRoutes() {

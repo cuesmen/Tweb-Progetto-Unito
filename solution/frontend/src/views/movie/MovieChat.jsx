@@ -1,4 +1,4 @@
-import Chat from "../../components/Chat";
+import Chat from "../../views/components/Chat";
 
 export default function MovieChat({ movie }) {
   const room = `movie:${movie.id}`;

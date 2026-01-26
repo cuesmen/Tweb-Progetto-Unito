@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useActorInfoQuery } from "../../api/actor/useActorInfoQuery";
-import DefaultPage from "../../components/DefaultPage";
-import Alert from "../../components/Alert";
+import DefaultPage from "../../views/components/DefaultPage";
+import Alert from "../../views/components/Alert";
 
 import {
   FiStar,
@@ -14,7 +14,7 @@ import {
   FiArrowRight,
   FiAlertCircle,
 } from "react-icons/fi";
-import OscarAwards from "../../components/OscarAwards";
+import OscarAwards from "../../views/components/OscarAwards";
 
 function formatDate(d) {
   if (!d) return null;

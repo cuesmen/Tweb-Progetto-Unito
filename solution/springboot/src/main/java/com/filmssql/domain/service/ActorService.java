@@ -1,6 +1,6 @@
 package com.filmssql.domain.service;
 
-import com.filmssql.dto.SearchResultDTO;
+import com.filmssql.domain.dto.SearchResultDTO;
 import com.filmssql.domain.repository.ActorRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

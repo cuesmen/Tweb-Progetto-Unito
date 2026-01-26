@@ -2,10 +2,10 @@ package com.filmssql.domain.service;
 
 import com.filmssql.domain.entity.*;
 import com.filmssql.domain.repository.*;
-import com.filmssql.util.Mappers;
-import com.filmssql.dto.MovieDTO;
-import com.filmssql.dto.MoviePreviewDTO;
-import com.filmssql.dto.SearchResultDTO;
+import com.filmssql.util.MovieMapper;
+import com.filmssql.domain.dto.MovieDTO;
+import com.filmssql.domain.dto.MoviePreviewDTO;
+import com.filmssql.domain.dto.SearchResultDTO;
 import com.filmssql.exception.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -57,7 +57,7 @@ public class MovieService {
         m = movieRepository.fetchCountries(id).orElse(m);
         m = movieRepository.fetchLanguages(id).orElse(m);
 
-        return Mappers.toDTO(m);
+        return MovieMapper.toDTO(m);
     }
 
     @Transactional(readOnly = true)
@@ -89,7 +89,7 @@ public class MovieService {
         Set<Genre> gs = new HashSet<>(genreRepository.findAllById(genreIds));
         m.getGenres().clear();
         m.getGenres().addAll(gs);
-        return Mappers.toDTO(m);
+        return MovieMapper.toDTO(m);
     }
 
     /**
@@ -101,7 +101,7 @@ public class MovieService {
         Set<Studio> ss = new HashSet<>(studioRepository.findAllById(studioIds));
         m.getStudios().clear();
         m.getStudios().addAll(ss);
-        return Mappers.toDTO(m);
+        return MovieMapper.toDTO(m);
     }
 
     /**
@@ -113,7 +113,7 @@ public class MovieService {
         Set<Country> ss = new HashSet<>(countryRepository.findAllById(ids));
         m.getCountries().clear();
         m.getCountries().addAll(ss);
-        return Mappers.toDTO(m);
+        return MovieMapper.toDTO(m);
     }
 
     /**
@@ -125,7 +125,7 @@ public class MovieService {
         Set<Language> ss = new HashSet<>(languageRepository.findAllById(ids));
         m.getLanguages().clear();
         m.getLanguages().addAll(ss);
-        return Mappers.toDTO(m);
+        return MovieMapper.toDTO(m);
     }
 
     /**

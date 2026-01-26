@@ -1,7 +1,7 @@
 package com.filmssql.domain.repository;
 
 import com.filmssql.domain.entity.Movie;
-import com.filmssql.dto.MoviePreviewDTO;
+import com.filmssql.domain.dto.MoviePreviewDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
@@ -67,9 +67,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long>
     List<Movie> findByNameContainingIgnoreCase(@Param("name") String name, Pageable pageable);
 
     @Query("""
-    select new com.filmssql.dto.MoviePreviewDTO(
+    select new com.filmssql.domain.dto.MoviePreviewDTO(
         m.id, m.name, m.date, m.description, m.rating,
-        new com.filmssql.dto.PosterDTO(p.id, p.link)
+        new com.filmssql.domain.dto.PosterDTO(p.id, p.link)
     )
     from Movie m
     left join m.poster p
@@ -84,9 +84,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long>
     Long findIdByOffset(@Param("off") long offset);
 
     @Query("""
-    select new com.filmssql.dto.MoviePreviewDTO(
+    select new com.filmssql.domain.dto.MoviePreviewDTO(
         m.id, m.name, m.date, m.description, m.rating,
-        new com.filmssql.dto.PosterDTO(p.id, p.link)
+        new com.filmssql.domain.dto.PosterDTO(p.id, p.link)
     )
     from Movie m
     left join m.poster p
@@ -96,9 +96,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long>
     List<MoviePreviewDTO> findTopRated(Pageable pageable);
 
     @Query("""
-    select new com.filmssql.dto.MoviePreviewDTO(
+    select new com.filmssql.domain.dto.MoviePreviewDTO(
         m.id, m.name, m.date, m.description, m.rating,
-        new com.filmssql.dto.PosterDTO(p.id, p.link)
+        new com.filmssql.domain.dto.PosterDTO(p.id, p.link)
     )
     from Movie m
     left join m.poster p

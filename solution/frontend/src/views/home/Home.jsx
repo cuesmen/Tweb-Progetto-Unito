@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import DefaultPage from "../../components/DefaultPage";
-import Alert from "../../components/Alert";
+import DefaultPage from "../../views/components/DefaultPage";
+import Alert from "../../views/components/Alert";
 import { useRandomMovie } from "../../api/movie/useRandomMovie";
 import HomeFilmFounded from "./HomeFilmFounded";
 import HomeTopSearch from "./HomeTopSearch";

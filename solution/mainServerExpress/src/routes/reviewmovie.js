@@ -6,6 +6,7 @@
 
 import express from "express";
 import { tryAxiosGet } from '../utils/helpers.js';
+import { axiosMiddleClient } from '../services/middleClient.js';
 
 const router = express.Router();
 
@@ -72,7 +73,11 @@ const router = express.Router();
    */
 router.get("/reviewmovie/:id", async (req, res, next) => {
   try {
-    const data = await tryAxiosGet(["/api/reviewmovie/:id", "/reviewmovie/:id"], req);
+    const data = await tryAxiosGet(
+      ["/api/reviewmovie/:id", "/reviewmovie/:id"],
+      req,
+      axiosMiddleClient
+    );
     if (!data) {
       return res.status(404).json({
         ok: false,
@@ -81,7 +86,7 @@ router.get("/reviewmovie/:id", async (req, res, next) => {
       });
     }
 
-    res.json({ ok: true, data: data, error: null });
+    res.json(data);
   } catch (e) {
     next(e);
   }

@@ -19,7 +19,10 @@ export async function connectMongoose() {
   const dbName = ENV.MONGO_DB || 'moviepoint';
 
   connecting = mongoose.connect(uri, {
-    dbName,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    checkServerIdentity: false,
+    dbName: dbName,
     maxPoolSize: ENV.MONGO_MAX_POOL_SIZE ?? 20,
     minPoolSize: ENV.MONGO_MIN_POOL_SIZE ?? 0,
     serverSelectionTimeoutMS: 12_000,

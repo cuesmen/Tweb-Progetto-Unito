@@ -1,6 +1,6 @@
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
 import MovieContainerCast from "./MovieContainerCast";
-import Flag from "../../components/Flag";
+import Flag from "../../views/components/Flag";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { listISO2 } from "../../utils/countryCodes";
 

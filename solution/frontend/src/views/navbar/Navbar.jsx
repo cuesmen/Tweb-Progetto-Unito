@@ -3,7 +3,7 @@ import logo from "../../assets/images/logo.png";
 import { FiSearch, FiUser, FiFilm, FiAlertCircle } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSearchQuery } from "../../api/search/useSearchQuery";
-import Alert from "../../components/Alert";
+import Alert from "../../views/components/Alert";
 
 // debounce hook to avoid excessive API calls
 function useDebouncedValue(value, delay = 500) {

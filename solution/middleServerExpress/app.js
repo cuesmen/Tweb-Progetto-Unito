@@ -12,11 +12,10 @@ import { ENV } from './src/config/env.js';
 import { setupSwagger } from './src/config/swagger.js';
 import { connectMongoose, closeMongoose } from './src/database/database.js';
 import { useChatSocket } from './src/socket-io/chat.js';
-
-import systemRoutes from './src/routes/system.js';
+import reviewRoutes from './src/routes/review.js';
 
 const app = express();
-app.use(cors({ origin: ENV.SPA_ORIGIN, credentials: true }));
+app.use(cors({ origin: ENV.SERVER_ORIGIN, credentials: true }));
 app.use(express.json());
 
 app.use((req, _res, next) => {
@@ -31,7 +30,7 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.use('/api', systemRoutes);
+app.use('/api', reviewRoutes);
 
 app.use((err, _req, res, _next) => {
   if (

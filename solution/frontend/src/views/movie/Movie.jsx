@@ -2,15 +2,15 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { scroller } from "react-scroll";
 
-import DefaultPage from "../../components/DefaultPage";
+import DefaultPage from "../../views/components/DefaultPage";
 import MovieContainer from "./MovieContainer";
 import MovieInfos from "./MovieInfos";
 import MovieCrewCarousel from "./MovieCrewCarousel";
 import MovieChat from "./MovieChat";
-import Alert from "../../components/Alert";
+import Alert from "../../views/components/Alert";
 import { useMovieQuery } from "../../api/movie/useMovieQuery";
 import MovieReviews from "./MovieReviews";
-import OscarAwards from "../../components/OscarAwards";
+import OscarAwards from "../../views/components/OscarAwards";
 
 export default function Movie() {
   const { id } = useParams();

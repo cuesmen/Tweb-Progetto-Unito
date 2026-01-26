@@ -1,15 +1,12 @@
 /**
- * Chat Socket.IO routes.
+ * Chat Socket.IO routes (gateway -> middle).
+ * The gateway only validates rooms and forwards events to the middle server,
+ * which is the component that writes/reads from MongoDB.
  * @module chatRoutes
  */
 
-import {
-  normalizeUsername,
-  normalizeText,
-  upsertChat,
-  addMessage,
-  listMessages,
-} from '../controllers/chat.js';
+import { io as createMiddleClient } from 'socket.io-client';
+import { ENV } from '../config/env.js';
 
 /** Create the room */
 function makeChatId(room) {
@@ -18,60 +15,75 @@ function makeChatId(room) {
   return null;
 }
 
+// Persistent upstream connection to the middle layer
+const middleSocket = createMiddleClient(ENV.MIDDLE_SOCKET_URL, {
+  transports: ['websocket'],
+});
+
+middleSocket.on('connect', () => {
+  console.log('[chat] Connected to middle Socket.IO');
+});
+
+middleSocket.on('connect_error', (err) => {
+  console.error('[chat] Middle socket connection error:', err.message);
+});
+
 /**
  * Socket.IO handlers factory.
  */
 export function useChatSocket(io) {
+  // Relay messages pushed by the middle server (in case other producers write there)
+  middleSocket.on('chat:message', (msg) => {
+    if (!msg?.chatId) return;
+    io.to(msg.chatId).emit('chat:message', msg);
+  });
+
   return (socket) => {
 
     socket.on('chat:join', (room) => {
       const chatId = makeChatId(room);
       if (!chatId) return;
       socket.join(chatId);
+      if (middleSocket.connected) {
+        middleSocket.emit('chat:join', chatId);
+      }
     });
 
     socket.on('chat:leave', (room) => {
       const chatId = makeChatId(room);
       if (!chatId) return;
       socket.leave(chatId);
-    });
-
-    // SEND MESSAGE
-    socket.on('chat:message', async ({ room, username, text }, ack) => {
-      try {
-        const chatId = makeChatId(room);
-        if (!chatId) return ack?.({ error: 'BAD_ROOM' });
-
-        const u = normalizeUsername(username);
-        const t = normalizeText(text);
-        if (!u || !t) return ack?.({ error: 'BAD_REQUEST' });
-
-        const now = new Date();
-
-        await upsertChat(chatId, now);
-
-        const saved = await addMessage(chatId, u, t, now);
-
-        io.to(chatId).emit('chat:message', saved);
-        ack?.(saved);
-
-      } catch (err) {
-        ack?.({ error: err.message || 'SEND_ERROR' });
+      if (middleSocket.connected) {
+        middleSocket.emit('chat:leave', chatId);
       }
     });
 
-    // LIST MESSAGES
-    socket.on('chat:list', async ({ room, limit, cursor }, ack) => {
-      try {
-        const chatId = makeChatId(room);
-        if (!chatId) return ack?.({ error: 'BAD_ROOM' });
+    // SEND MESSAGE (forward to middle)
+    socket.on('chat:message', ({ room, username, text }, ack) => {
+      const chatId = makeChatId(room);
+      if (!chatId) return ack?.({ error: 'BAD_ROOM' });
 
-        const result = await listMessages(chatId, limit, cursor);
-        ack?.(result);
-
-      } catch (err) {
-        ack?.({ error: err.message || 'LIST_ERROR' });
+      if (!middleSocket.connected) {
+        return ack?.({ error: 'MIDDLE_UNAVAILABLE' });
       }
+
+      middleSocket.emit('chat:message', { room: chatId, username, text }, (res) => {
+        ack?.(res);
+      });
+    });
+
+    // LIST MESSAGES (forward to middle)
+    socket.on('chat:list', ({ room, limit, cursor }, ack) => {
+      const chatId = makeChatId(room);
+      if (!chatId) return ack?.({ error: 'BAD_ROOM' });
+
+      if (!middleSocket.connected) {
+        return ack?.({ error: 'MIDDLE_UNAVAILABLE' });
+      }
+
+      middleSocket.emit('chat:list', { room: chatId, limit, cursor }, (res) => {
+        ack?.(res);
+      });
     });
   };
 }

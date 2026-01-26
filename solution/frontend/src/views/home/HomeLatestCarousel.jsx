@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLatestMovies } from "../../api/movie/useTopLatestMovies";
-import Alert from "../../components/Alert";
+import Alert from "../../views/components/Alert";
 import HomeCarouselCard from "./HomeCarouselCard";
 import HomeCarouselSkeleton from "./HomeCarouselSkeleton";
 

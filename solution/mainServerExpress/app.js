@@ -10,7 +10,6 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { ENV } from './src/config/env.js';
 import { setupSwagger } from './src/config/swagger.js';
-import { connectMongoose, closeMongoose } from './src/database/database.js';
 import { useChatSocket } from './src/socket-io/chat.js';
 
 import systemRoutes from './src/routes/system.js';
@@ -96,16 +95,11 @@ app.set('io', io);
 io.on('connection', useChatSocket(io));
 
 server.listen(ENV.PORT, () => {
-  connectMongoose().then(() => {
-    console.log(`Gateway running on http://localhost:${ENV.PORT}`);
-  }).catch((err) => {
-    console.error('Mongo connection failed:', err);
-  });
+  console.log(`Gateway running on http://localhost:${ENV.PORT}`);
 });
 
 const shutdown = async (signal) => {
   console.log(`\n${signal} received, closing...`);
-  await closeMongoose();
   server.close(() => process.exit(0));
 };
 

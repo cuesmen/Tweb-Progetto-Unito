@@ -13,9 +13,10 @@ import { axiosClient } from '../services/client.js';
  * Throws the last error if all attempts fail.
  * @param {string[]} paths Candidate paths (with :params) to try in order.
  * @param {ExpressRequest} req Incoming request used for params/query.
+ * @param {import('axios').AxiosInstance} client Axios instance (defaults to Spring client).
  * @returns {Promise<any>} Upstream response payload.
  */
-export async function tryAxiosGet(paths, req) {
+export async function tryAxiosGet(paths, req, client = axiosClient) {
   let lastErr = null;
 
   for (const p of paths) {
@@ -29,7 +30,7 @@ export async function tryAxiosGet(paths, req) {
     }
 
     try {
-      const { data } = await axiosClient.get(url, { params: query });
+      const { data } = await client.get(url, { params: query });
       return data;
     } catch (err) {
       lastErr = err;

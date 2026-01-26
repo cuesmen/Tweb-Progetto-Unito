@@ -1,9 +1,0 @@
-com.filmssql
-com.filmssql.config
-com.filmssql.domain.entity
-com.filmssql.domain.repository
-com.filmssql.domain.service
-com.filmssql.util
-com.filmssql.web.controller
-com.filmssql.web.dto
-com.filmssql.web.exception
