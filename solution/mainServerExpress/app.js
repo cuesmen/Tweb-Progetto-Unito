@@ -6,11 +6,8 @@
 
 import express from 'express';
 import cors from 'cors';
-import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 import { ENV } from './src/config/env.js';
 import { setupSwagger } from './src/config/swagger.js';
-import { useChatSocket } from './src/socket-io/chat.js';
 
 import systemRoutes from './src/routes/system.js';
 import moviesRoutes from './src/routes/movies.js';
@@ -18,23 +15,16 @@ import actorsRoutes from './src/routes/actors.js';
 import searchRoutes from './src/routes/search.js';
 import reviewsRoutes from './src/routes/reviewmovie.js';
 import oscarRoutes from './src/routes/oscarawards.js';
+import logger from 'morgan'
 
 const app = express();
+// logger
+app.use(logger('dev'));
+
 app.use(cors({ origin: ENV.SPA_ORIGIN, credentials: true }));
 app.use(express.json());
 
-app.use((req, _res, next) => {
-  console.log(
-    `[REQ] ${req.method} ${req.originalUrl}`,
-    {
-      params: req.params,
-      query: req.query,
-      body: Object.keys(req.body || {}).length ? req.body : undefined
-    }
-  );
-  next();
-});
-
+// routes
 app.use('/api', systemRoutes);
 app.use('/api', moviesRoutes);
 app.use('/api', actorsRoutes);
@@ -66,7 +56,8 @@ app.use((err, _req, res, _next) => {
     });
   }
 
-  console.error('INTERNAL ERROR:', err);
+  // Keep it for major debugging
+  //console.error('INTERNAL ERROR:', err);
 
   res.status(err.statusCode || 500).json({
     ok: false,
@@ -79,30 +70,17 @@ app.use((err, _req, res, _next) => {
 });
 
 
-if (ENV.ENABLE_DOCS === 'true') setupSwagger(app);
-
-const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  cors: {
-    origin: ENV.SPA_ORIGIN,        
-    methods: ["GET", "POST"],
-    credentials: true,             
-  },
+// error handler
+app.use((err, _req, res, _next) => {
+  //console.error('INTERNAL ERROR:', err);
+  res.status(err.statusCode || 500).json({
+    ok: false,
+    error: err.message || 'Unexpected error'
+  });
 });
 
-app.set('io', io);
+if (ENV.ENABLE_DOCS === 'true') {
+  setupSwagger(app);
+}
 
-io.on('connection', useChatSocket(io));
-
-server.listen(ENV.PORT, () => {
-  console.log(`Gateway running on http://localhost:${ENV.PORT}`);
-});
-
-const shutdown = async (signal) => {
-  console.log(`\n${signal} received, closing...`);
-  server.close(() => process.exit(0));
-};
-
-
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+export default app;

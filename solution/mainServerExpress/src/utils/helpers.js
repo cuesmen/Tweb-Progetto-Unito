@@ -6,14 +6,13 @@
 
 import { axiosClient } from '../services/client.js';
 
-/** @typedef {object} ExpressRequest */
-
 /**
  * Try a list of upstream paths against the backend, interpolating path params.
  * Throws the last error if all attempts fail.
+ *
  * @param {string[]} paths Candidate paths (with :params) to try in order.
  * @param {ExpressRequest} req Incoming request used for params/query.
- * @param {import('axios').AxiosInstance} client Axios instance (defaults to Spring client).
+ * @param {AxiosInstance} client Axios instance (defaults to Spring client).
  * @returns {Promise<any>} Upstream response payload.
  */
 export async function tryAxiosGet(paths, req, client = axiosClient) {
@@ -34,14 +33,16 @@ export async function tryAxiosGet(paths, req, client = axiosClient) {
       return data;
     } catch (err) {
       lastErr = err;
-      console.error('[AXIOS GET] failed', {
+      // Delete the comment for major debugging
+      
+      /*console.error('[AXIOS GET] failed', {
         url,
         status: err?.response?.status,
         code: err?.code,
         message: err?.message,
         params,
         query,
-      });
+      });*/
       // keep trying the next candidate path
     }
   }

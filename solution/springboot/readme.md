@@ -8,11 +8,6 @@ This module provides the Spring Boot backend for MoviePoint. It exposes REST API
 - OpenAPI/Swagger (springdoc)
 
 ## Structure
-- `src/main/java/com/filmssql/domain/entity`: JPA entities (movies, actors, cast/crew, genres, studios, countries, languages, posters, releases, reviews, Oscars).
-- `src/main/java/com/filmssql/domain/repository`: Spring Data repositories with custom queries (previews, top-rated, latest, random).
-- `src/main/java/com/filmssql/domain/service`: Business logic (loading relations, previews, search, random pick, Oscars, reviews) with transactional boundaries.
-- `src/main/java/com/filmssql/web/controller`: REST controllers, DTO exposure, OpenAPI annotations.
-- `src/main/java/com/filmssql/web/dto`: DTOs to avoid leaking JPA entities.
 - `src/main/java/com/filmssql/web/exception`: Custom exceptions (e.g., NotFoundException) with a global exception handler.
 - `docs/`: generated API docs (Swagger UI at `/docs` when enabled).
 - `src/main/resources/application.properties`: DB config, dialect, Swagger paths, static resources (images).

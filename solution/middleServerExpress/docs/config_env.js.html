@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chatController.html">chatController</a></li><li><a href="module-chatRoutes.html">chatRoutes</a></li><li><a href="module-reviewController.html">reviewController</a></li></ul></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongooseClient.html">mongooseClient</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-reviewRoutes.html">reviewRoutes</a></li></ul></div>
                 
             </nav>
         </div>
@@ -104,16 +104,12 @@ const __dirname = dirname(__filename);
 
 /**
  * Normalized environment values with sane defaults for local development.
- * @type {{PORT:number, SPA_ORIGIN:string, SPRING_URL:string, ENABLE_DOCS:string, IMG_BASE_URL:string, MONGO_URI:string, MONGO_DB:string, MONGO_MAX_RETRIES:number, MONGO_MIN_POOL_SIZE:number, MONGO_MAX_POOL_SIZE:number, __dirname:string}}
+ * @type {{PORT:number, SERVER_ORIGIN:string, ENABLE_DOCS:string, IMG_BASE_URL:string, MONGO_URI:string, MONGO_DB:string, __dirname:string}}
  */
 export const ENV = {
   // Server base
   PORT: process.env.PORT || 4000,
-  SPA_ORIGIN: process.env.SPA_ORIGIN || 'http://localhost:5173',
-
-  // Java Spring backend base URL
-  SPRING_URL: process.env.SPRING_URL || 'http://localhost:8081',
-
+  SERVER_ORIGIN: process.env.SERVER_ORIGIN || 'http://localhost:4000',
   // Docs and images
   ENABLE_DOCS: process.env.ENABLE_DOCS ?? 'true',
   IMG_BASE_URL:
@@ -123,10 +119,7 @@ export const ENV = {
 
   // MongoDB configuration
   MONGO_URI: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017',
-  MONGO_DB: process.env.MONGO_DB || 'appdb',
-  MONGO_MAX_RETRIES: Number(process.env.MONGO_MAX_RETRIES ?? 5),
-  MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE ?? 0),
-  MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE ?? 20),
+  MONGO_DB: process.env.MONGO_DB || 'moviepoint',
 
   __dirname,
 };

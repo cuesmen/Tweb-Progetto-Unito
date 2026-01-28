@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-axiosClient.html">axiosClient</a></li><li><a href="module-queryClient.html">queryClient</a></li><li><a href="module-useActorInfoQuery.html">useActorInfoQuery</a></li><li><a href="module-useApiQuery.html">useApiQuery</a></li><li><a href="module-useChatRoom.html">useChatRoom</a></li><li><a href="module-useMovieQuery.html">useMovieQuery</a></li><li><a href="module-useOscarAwardQuery.html">useOscarAwardQuery</a></li><li><a href="module-useRandomMovie.html">useRandomMovie</a></li><li><a href="module-useReviewQuery.html">useReviewQuery</a></li><li><a href="module-useSearchQuery.html">useSearchQuery</a></li><li><a href="module-useTopLatestMovies.html">useTopLatestMovies</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li><li><a href="ChatService.html">ChatService</a></li><li><a href="MovieService.html">MovieService</a></li><li><a href="OscarAwardService.html">OscarAwardService</a></li><li><a href="ReviewService.html">ReviewService</a></li><li><a href="SearchService.html">SearchService</a></li></ul></div><div class="category"><h2>Models</h2><h3>Modules</h3><ul><li><a href="module-ActorInfo.html">ActorInfo</a></li><li><a href="module-ChatMessage.html">ChatMessage</a></li><li><a href="module-ChatMeta.html">ChatMeta</a></li><li><a href="module-Movie.html">Movie</a></li><li><a href="module-OscarAward.html">OscarAward</a></li><li><a href="module-Review.html">Review</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-countryCodes.html">countryCodes</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>API</h2><h3>Modules</h3><ul><li><a href="module-axiosClient.html">axiosClient</a></li><li><a href="module-queryClient.html">queryClient</a></li><li><a href="module-useActorInfoQuery.html">useActorInfoQuery</a></li><li><a href="module-useApiQuery.html">useApiQuery</a></li><li><a href="module-useChatRoom.html">useChatRoom</a></li><li><a href="module-useMovieQuery.html">useMovieQuery</a></li><li><a href="module-useOscarAwardQuery.html">useOscarAwardQuery</a></li><li><a href="module-useRandomMovie.html">useRandomMovie</a></li><li><a href="module-useReviewQuery.html">useReviewQuery</a></li><li><a href="module-useSearchQuery.html">useSearchQuery</a></li><li><a href="module-useTopLatestMovies.html">useTopLatestMovies</a></li></ul><h3>Classes</h3><ul><li><a href="ActorInfoService.html">ActorInfoService</a></li><li><a href="MovieService.html">MovieService</a></li><li><a href="OscarAwardService.html">OscarAwardService</a></li><li><a href="ReviewService.html">ReviewService</a></li><li><a href="SearchService.html">SearchService</a></li></ul></div><div class="category"><h2>Models</h2><h3>Modules</h3><ul><li><a href="module-ActorInfo.html">ActorInfo</a></li><li><a href="module-ChatMessage.html">ChatMessage</a></li><li><a href="module-ChatMeta.html">ChatMeta</a></li><li><a href="module-Movie.html">Movie</a></li><li><a href="module-OscarAward.html">OscarAward</a></li><li><a href="module-Review.html">Review</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-countryCodes.html">countryCodes</a></li></ul></div>
                 
             </nav>
         </div>
@@ -143,18 +143,25 @@ export function useApiQuery({
 
   const snapshot = useSyncExternalStore(subscribe, getSnapshot);
 
+  // If the last fetch errored, avoid auto-refetch loops; manual refetch or stale invalidation will re-run.
+  const haltOnError = snapshot.status === "error";
+
   useEffect(() => {
     if (!enabled) return;
-    if (snapshot.inflight) return;
+
+    // Avoid duplicate fetches. inflight = fetch in progress.
+    if (snapshot.inflight) return; 
 
     const now = Date.now();
+    
+    // Determine if data is stale.
     const isStale = !snapshot.staleAt || now > snapshot.staleAt;
+    
     const noData = typeof snapshot.data === "undefined";
     const shouldFetch =
       snapshot.status === "idle" ||
-      snapshot.status === "error" ||
-      (noData &amp;&amp; snapshot.status !== "loading") ||
-      isStale;
+      (!haltOnError &amp;&amp; noData &amp;&amp; snapshot.status !== "loading") ||
+      (!haltOnError &amp;&amp; isStale &amp;&amp; snapshot.status === "success");
 
     if (!shouldFetch) return;
 
@@ -168,6 +175,7 @@ export function useApiQuery({
       console.error(`API Query Error [${key}] →`, error);
       if (onError) onError(error);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     enabled,
     key,
@@ -210,7 +218,7 @@ export function useApiQuery({
 
   const selectedData = selectCacheRef.current.selected;
 
-  const isLoading = snapshot.status === "loading" &amp;&amp; !snapshot.data;
+  const isLoading = snapshot.status === "loading" &amp;&amp; !snapshot.data &amp;&amp; snapshot.error === null;
   const isFetching = snapshot.isFetching;
   const isError = snapshot.status === "error";
 

@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chatRoutes.html">chatRoutes</a></li></ul></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-client.html">client</a></li><li><a href="module-middleClient.html">middleClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
                 
             </nav>
         </div>
@@ -95,33 +95,52 @@
  * @category Utils
  */
 
-import { spring } from '../services/springClient.js';
-
-/** @typedef {object} ExpressRequest */
+import { axiosClient } from '../services/client.js';
 
 /**
- * Try a list of upstream paths against the Spring backend, interpolating path params.
+ * Try a list of upstream paths against the backend, interpolating path params.
  * Throws the last error if all attempts fail.
+ *
  * @param {string[]} paths Candidate paths (with :params) to try in order.
  * @param {ExpressRequest} req Incoming request used for params/query.
+ * @param {AxiosInstance} client Axios instance (defaults to Spring client).
  * @returns {Promise&lt;any>} Upstream response payload.
  */
-export async function trySpringGet(paths, req) {
+export async function tryAxiosGet(paths, req, client = axiosClient) {
   let lastErr = null;
+
   for (const p of paths) {
     let url = p;
-    for (const [k, v] of Object.entries(req.params || {})) {
+    const params = req?.params || {};   // req can be null/undefined; default to empty object
+    const query = req?.query;           // query is optional
+
+    // interpolate path params like :id using provided params
+    for (const [k, v] of Object.entries(params)) {
       url = url.replace(new RegExp(`:${k}\\b`, 'g'), encodeURIComponent(String(v)));
     }
+
     try {
-      const { data } = await spring.get(url, { params: req.query });
+      const { data } = await client.get(url, { params: query });
       return data;
     } catch (err) {
       lastErr = err;
-      throw err;
+      // Delete the comment for major logging
+      
+      /*console.error('[AXIOS GET] failed', {
+        url,
+        status: err?.response?.status,
+        code: err?.code,
+        message: err?.message,
+        params,
+        query,
+      });*/
+      // keep trying the next candidate path
     }
   }
-  throw lastErr ?? new Error('Upstream not found');
+
+  // all attempts failed
+  if (lastErr) throw lastErr;
+  throw new Error('Upstream not found');
 }
 </code></pre>
         </article>

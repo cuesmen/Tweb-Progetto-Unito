@@ -6,32 +6,35 @@
 
 import express from 'express';
 import cors from 'cors';
-import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
+import logger from 'morgan';
+
 import { ENV } from './src/config/env.js';
 import { setupSwagger } from './src/config/swagger.js';
-import { connectMongoose, closeMongoose } from './src/database/database.js';
-import { useChatSocket } from './src/socket-io/chat.js';
+
 import reviewRoutes from './src/routes/review.js';
 
 const app = express();
+
+// logger
+app.use(logger('dev'));
+
 app.use(cors({ origin: ENV.SERVER_ORIGIN, credentials: true }));
 app.use(express.json());
 
+// custom request logger keep it for major debugging
 app.use((req, _res, next) => {
-  console.log(
-    `[REQ] ${req.method} ${req.originalUrl}`,
-    {
-      params: req.params,
-      query: req.query,
-      body: Object.keys(req.body || {}).length ? req.body : undefined
-    }
-  );
+  console.log(`[REQ] ${req.method} ${req.originalUrl}`, {
+    params: req.params,
+    query: req.query,
+    body: Object.keys(req.body || {}).length ? req.body : undefined
+  });
   next();
 });
 
+// routes
 app.use('/api', reviewRoutes);
 
+// error handler
 app.use((err, _req, res, _next) => {
   if (
     err?.name === 'AbortError' ||
@@ -68,36 +71,8 @@ app.use((err, _req, res, _next) => {
   });
 });
 
+if (ENV.ENABLE_DOCS === 'true') {
+  setupSwagger(app);
+}
 
-if (ENV.ENABLE_DOCS === 'true') setupSwagger(app);
-
-const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  cors: {
-    origin: ENV.SPA_ORIGIN,        
-    methods: ["GET", "POST"],
-    credentials: true,             
-  },
-});
-
-app.set('io', io);
-
-io.on('connection', useChatSocket(io));
-
-server.listen(ENV.PORT, () => {
-  connectMongoose().then(() => {
-    console.log(`Gateway running on http://localhost:${ENV.PORT}`);
-  }).catch((err) => {
-    console.error('Mongo connection failed:', err);
-  });
-});
-
-const shutdown = async (signal) => {
-  console.log(`\n${signal} received, closing...`);
-  await closeMongoose();
-  server.close(() => process.exit(0));
-};
-
-
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+export default app;

@@ -70,7 +70,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chatRoutes.html">chatRoutes</a></li></ul></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-client.html">client</a></li><li><a href="module-middleClient.html">middleClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
                 
             </nav>
         </div>
@@ -207,8 +207,8 @@
 
 
     
-    <h4 class="name" id=".trySpringGet">
-        <a class="href-link" href="#.trySpringGet">#</a>
+    <h4 class="name" id=".tryAxiosGet">
+        <a class="href-link" href="#.tryAxiosGet">#</a>
         
             
                 <span class='tag'>static</span>
@@ -216,7 +216,7 @@
         
         <span class="code-name">
             
-                trySpringGet<span class="signature">(paths, req)</span><span class="type-signature"> &rarr; {Promise.&lt;any>}</span>
+                tryAxiosGet<span class="signature">(paths, req, client)</span><span class="type-signature"> &rarr; {Promise.&lt;any>}</span>
             
         </span>
     </h4>
@@ -225,7 +225,7 @@
     
     
     <div class="description">
-        <p>Try a list of upstream paths against the Spring backend, interpolating path params.
+        <p>Try a list of upstream paths against the backend, interpolating path params.
 Throws the last error if all attempts fail.</p>
     </div>
     
@@ -306,6 +306,31 @@ Throws the last error if all attempts fail.</p>
   
 
   <td class="description last"><p>Incoming request used for params/query.</p></td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>client</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">AxiosInstance</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Axios instance (defaults to Spring client).</p></td>
 </tr>
 
 
@@ -410,86 +435,6 @@ Throws the last error if all attempts fail.</p>
         </div>
     
 
-    
-        <div class='vertical-section'>
-            <h1>Type Definitions</h1>
-            <div class="members">
-            
-                <div class="member">
-
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
-        
-<code class="param-type">object</code>
-
-
-    </span>
-
-<h4 class="name" id="~ExpressRequest">
-    <a class="href-link" href="#~ExpressRequest">#</a>
-    
-    <span class="code-name">
-        ExpressRequest
-    </span>
-    
-</h4>
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="utils_helpers.js.html" class="button">View Source</a>
-            <span>
-                <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line9">line 9</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-</div>
-            
-            </div>
-        </div>
     
 
     

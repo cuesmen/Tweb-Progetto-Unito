@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongoClient.html">mongoClient</a></li></ul></div><div class="category"><h2>Root</h2><h3>Modules</h3><ul><li><a href="module-server.html">server</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-mongo.html">mongo</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-springClient.html">springClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chatRoutes.html">chatRoutes</a></li></ul></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-movies.html">movies</a></li><li><a href="module-oscarawards.html">oscarawards</a></li><li><a href="module-reviewmovie.html">reviewmovie</a></li><li><a href="module-search.html">search</a></li><li><a href="module-system.html">system</a></li></ul></div><div class="category"><h2>Services</h2><h3>Modules</h3><ul><li><a href="module-cache.html">cache</a></li><li><a href="module-client.html">client</a></li><li><a href="module-middleClient.html">middleClient</a></li></ul></div><div class="category"><h2>Utils</h2><h3>Modules</h3><ul><li><a href="module-gender.html">gender</a></li><li><a href="module-helpers.html">helpers</a></li><li><a href="module-images.html">images</a></li></ul></div>
                 
             </nav>
         </div>
@@ -96,7 +96,7 @@
  */
 
 import express from "express";
-import { trySpringGet } from "../utils/helpers.js";
+import { tryAxiosGet } from "../utils/helpers.js";
 import { buildImageUrl } from "../utils/images.js";
 
 /**
@@ -144,77 +144,6 @@ const router = express.Router();
 
 /**
  * @openapi
- * /api/movies/{id}:
- *   get:
- *     summary: Return movie details
- *     tags: [Movies]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Movie ID
- *     responses:
- *       200:
- *         description: Movie data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 1000048
- *                 name:
- *                   type: string
- *                   example: "Inception"
- *                 cast:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       actorId:
- *                         type: integer
- *                         example: 84742
- *                       name:
- *                         type: string
- *                         example: "Leonardo DiCaprio"
- *                       imageUrl:
- *                         type: string
- *                         example: "http://localhost:8080/actors/58.jpg"
- *       404:
- *         description: Movie not found
- */
-router.get("/movies/:id", async (req, res, next) => {
-  try {
-    const data = await trySpringGet(["/api/movies/:id", "/movies/:id"], req);
-    if (!data) {
-      return res.status(404).json({
-        ok: false,
-        data: null,
-        error: { code: "MOVIE_NOT_FOUND", message: "Movie not found" },
-      });
-    }
-
-    const enriched = {
-      ...data,
-      cast: Array.isArray(data?.cast)
-        ? data.cast.map((c) => ({
-            ...c,
-            imageUrl: c.imagePath ? buildImageUrl(c.imagePath) : null,
-          }))
-        : [],
-    };
-
-    res.json({ ok: true, data: enriched, error: null });
-  } catch (e) {
-    next(e);
-  }
-});
-
-/**
- * @openapi
  * /api/movies/random:
  *   get:
  *     summary: Return a random movie (shuffle)
@@ -256,9 +185,9 @@ router.get("/movies/:id", async (req, res, next) => {
  */
 router.get("/movies/random", async (req, res, next) => {
   try {
-    const data = await trySpringGet(
+    const data = await tryAxiosGet(
       ["/api/movies/random", "/movies/random"],
-      req
+      null
     );
 
     if (!data) {
@@ -342,7 +271,7 @@ router.get("/movies/random", async (req, res, next) => {
  */
 router.get("/movies/top-rated", async (req, res, next) => {
   try {
-    const upstream = await trySpringGet(
+    const upstream = await tryAxiosGet(
       ["/api/movies/top-rated", "/movies/top-rated"],
       req
     );
@@ -410,8 +339,8 @@ router.get("/movies/top-rated", async (req, res, next) => {
  */
 router.get("/movies/latest", async (req, res, next) => {
   try {
-    const upstream = await trySpringGet(
-      ["/api/movies/latest", "/movies/latest"],
+    const upstream = await tryAxiosGet(
+      ["/api/movies/latest", "/movies/latest"], 
       req
     );
 
@@ -432,6 +361,77 @@ router.get("/movies/latest", async (req, res, next) => {
     return res.json({ ok: true, data, error: null });
   } catch (e) {
     return next(e);
+  }
+});
+
+/**
+ * @openapi
+ * /api/movies/{id}:
+ *   get:
+ *     summary: Return movie details
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Movie ID
+ *     responses:
+ *       200:
+ *         description: Movie data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1000048
+ *                 name:
+ *                   type: string
+ *                   example: "Inception"
+ *                 cast:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       actorId:
+ *                         type: integer
+ *                         example: 84742
+ *                       name:
+ *                         type: string
+ *                         example: "Leonardo DiCaprio"
+ *                       imageUrl:
+ *                         type: string
+ *                         example: "http://localhost:8080/actors/58.jpg"
+ *       404:
+ *         description: Movie not found
+ */
+router.get("/movies/:id", async (req, res, next) => {
+  try {
+    const data = await tryAxiosGet(["/api/movies/:id", "/movies/:id"], req);
+    if (!data) {
+      return res.status(404).json({
+        ok: false,
+        data: null,
+        error: { code: "MOVIE_NOT_FOUND", message: "Movie not found" },
+      });
+    }
+
+    const enriched = {
+      ...data,
+      cast: Array.isArray(data?.cast)
+        ? data.cast.map((c) => ({
+            ...c,
+            imageUrl: c.imagePath ? buildImageUrl(c.imagePath) : null,
+          }))
+        : [],
+    };
+
+    res.json({ ok: true, data: enriched, error: null });
+  } catch (e) {
+    next(e);
   }
 });
 

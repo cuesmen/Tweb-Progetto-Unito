@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+
+/**
+ * Server startup (HTTP + Socket.IO)
+ */
+
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+
+import app from '../app.js';
+import { ENV } from '../src/config/env.js';
+import { connectMongoose, closeMongoose } from '../src/database/database.js';
+import { useChatSocket } from '../src/socket-io/chat.js';
+
+const port = ENV.PORT || 3000;
+
+// HTTP server
+const server = http.createServer(app);
+
+// Socket.IO
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: ENV.SPA_ORIGIN,
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
+
+app.set('io', io);
+io.on('connection', useChatSocket(io));
+
+// start server
+server.listen(port, async () => {
+  try {
+    await connectMongoose();
+    console.log(`Gateway running on http://localhost:${port}`);
+  } catch (err) {
+    console.error('Mongo connection failed:', err);
+  }
+});
+
+// graceful shutdown
+const shutdown = async (signal) => {
+  console.log(`\n${signal} received, closing...`);
+  await closeMongoose();
+  server.close(() => process.exit(0));
+};
+
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));

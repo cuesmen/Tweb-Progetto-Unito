@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 
 /**
  * Normalized environment values with sane defaults for local development.
- * @type {{PORT:number, SERVER_ORIGIN:string, ENABLE_DOCS:string, IMG_BASE_URL:string, MONGO_URI:string, MONGO_DB:string, MONGO_MAX_RETRIES:number, MONGO_MIN_POOL_SIZE:number, MONGO_MAX_POOL_SIZE:number, __dirname:string}}
+ * @type {{PORT:number, SERVER_ORIGIN:string, ENABLE_DOCS:string, IMG_BASE_URL:string, MONGO_URI:string, MONGO_DB:string, __dirname:string}}
  */
 export const ENV = {
   // Server base
@@ -28,10 +28,7 @@ export const ENV = {
 
   // MongoDB configuration
   MONGO_URI: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017',
-  MONGO_DB: process.env.MONGO_DB || 'appdb',
-  MONGO_MAX_RETRIES: Number(process.env.MONGO_MAX_RETRIES ?? 5),
-  MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE ?? 0),
-  MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE ?? 20),
+  MONGO_DB: process.env.MONGO_DB || 'moviepoint',
 
   __dirname,
 };

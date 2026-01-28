@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> controllers/chat.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">MainServerExpress Docs</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chatController.html">chatController</a></li><li><a href="module-chatRoutes.html">chatRoutes</a></li><li><a href="module-reviewController.html">reviewController</a></li></ul></div><div class="category"><h2>Config</h2><h3>Modules</h3><ul><li><a href="module-env.html">env</a></li><li><a href="module-swagger.html">swagger</a></li></ul></div><div class="category"><h2>MongoDB</h2><h3>Modules</h3><ul><li><a href="module-mongooseClient.html">mongooseClient</a></li></ul></div><div class="category"><h2>Routes</h2><h3>Modules</h3><ul><li><a href="module-reviewRoutes.html">reviewRoutes</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>controllers/chat.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Chat controller (business logic).
+ * @module chatController
+ */
+
+import mongoose from 'mongoose';
+import { connectMongoose } from '../database/database.js';
+import { ChatModel } from '../models/chat.js';
+import { MessageModel } from '../models/chatMessage.js';
+
+/** Limits */
+const MAX_TEXT = 2000;
+const MAX_USERNAME = 50;
+
+export function normalizeUsername(u) {
+  const s = String(u ?? '').trim();
+  if (!s || s.length > MAX_USERNAME) return null;
+  return s;
+}
+
+export function normalizeText(t) {
+  const s = String(t ?? '').trim();
+  if (!s || s.length > MAX_TEXT) return null;
+  return s;
+}
+
+/** Helpers */
+function makeChatMeta(chatId) {
+  if (chatId === 'global') {
+    return { type: 'global', movieId: null };
+  }
+  if (chatId.startsWith('movie:')) {
+    return { type: 'movie', movieId: chatId.slice(6) };
+  }
+  throw new Error('INVALID_CHAT_ID');
+}
+
+/**
+ * Ensure chat exists and update metadata atomically.
+ */
+export async function upsertChat(chatId, now) {
+  await connectMongoose();
+
+  const { type, movieId } = makeChatMeta(chatId);
+
+  const updated = await ChatModel.findOneAndUpdate(
+    { chatId },
+    {
+      $set: { lastMessageAt: now, type, movieId },
+      $inc: { messagesCount: 1 },
+    },
+    { new: true }
+  );
+
+  if (updated) return updated;
+
+  return ChatModel.create({
+    chatId,
+    type,
+    movieId,
+    createdAt: now,
+    lastMessageAt: now,
+    messagesCount: 1,
+  });
+}
+
+/**
+ * Insert a message in MongoDB.
+ */
+export async function addMessage(chatId, username, text, now) {
+  await connectMongoose();
+
+  return MessageModel.create({
+    chatId,
+    author: { username },
+    text,
+    createdAt: now,
+  });
+}
+
+/**
+ * List messages with cursor-based pagination.
+ */
+export async function listMessages(chatId, limit = 20, cursor = null) {
+  await connectMongoose();
+
+  const filter = { chatId };
+
+  if (cursor &amp;&amp; mongoose.Types.ObjectId.isValid(cursor)) {
+    filter._id = { $lt: new mongoose.Types.ObjectId(cursor) };
+  }
+
+  const lim = Math.max(1, Math.min(limit, 100));
+
+  const docs = await MessageModel.find(filter)
+    .sort({ _id: -1 })
+    .limit(lim + 1)
+    .lean();
+
+  const hasMore = docs.length === lim + 1;
+  const items = hasMore ? docs.slice(0, lim) : docs;
+  const nextCursor = hasMore ? String(items[items.length - 1]._id) : null;
+
+  return { items, hasMore, nextCursor };
+}
+
+/** Ensure the global chat document exists. */
+async function ensureGlobalChat() {
+  const now = new Date();
+
+  await ChatModel.updateOne(
+    { chatId: 'global' },
+    {
+      $setOnInsert: {
+        chatId: 'global',
+        type: 'global',
+        movieId: null,
+        createdAt: now,
+        lastMessageAt: null,
+        messagesCount: 0,
+      },
+    },
+    { upsert: true }
+  );
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
